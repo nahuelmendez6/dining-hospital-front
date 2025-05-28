@@ -25,12 +25,41 @@ const generateQRData = (ticketData) => {
   });
 };
 
-export const generateTicket = async (pin) => {
+
+
+export const getCurrentShift = async () => {
+
+    try {
+
+        const response = await axios.get(`${API_URL}tickets/init/`);
+        const data = response.data;
+
+        if (!data.shift) {
+            return {type : 'no_shift', message: 'No hay turno activo en este momento'};
+        }
+
+        return {
+            type: data.type, // 'select_menu' o 'pin_only'
+            shift: data.shift,
+            menu_items: data.menu_items || []
+        };
+    } catch (error) {
+        console.error('Error al consultar el turno:', error);
+        throw new Error('No se pudo obtener el turno actual. Intente nuevamente.')
+    }
+
+}
+
+
+
+export const generateTicket = async (pin, items) => {
     try {
         console.log('Enviando PIN:', pin); // Log del PIN que enviamos
+        console.log('Enviando ITEMS', items);
+
         const response = await axios.post(
-            `${API_URL}tickets/new/`, 
-            { pin },
+            `${API_URL}tickets/new-v2/`, 
+            { pin, items },
             {
                 headers: {
                     'Content-Type': 'application/json'
@@ -42,6 +71,7 @@ export const generateTicket = async (pin) => {
         const ticketData = {
             ticket_id: response.data.ticket_id,
             status: response.data.status,
+            words: response.data.words,
             // Asumimos que estos datos vienen en la respuesta del POST
             user: response.data.user,
             shift: response.data.shift,
@@ -50,7 +80,7 @@ export const generateTicket = async (pin) => {
 
         return {
             ...ticketData,
-            qr_data: generateQRData(ticketData)
+            // qr_data: generateQRData(ticketData)
         };
     } catch (error) {
         // Log detallado del error

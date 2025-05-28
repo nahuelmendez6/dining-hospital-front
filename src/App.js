@@ -10,6 +10,7 @@ import Departments from './pages/Departments';
 import Reports from './pages/Reports';
 import TicketGenerator from './pages/TicketGenerator';
 import Unauthorized from './pages/Unauthorized';
+import TicketPage from './pages/TicketPage';
 
 function App() {
   return (
@@ -20,7 +21,9 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/login-pin" element={<LoginPin />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
-          <Route path="/tickets" element={<TicketGenerator />} />
+          {/* <Route path="/tickets" element={<TicketGenerator />} /> */}
+          <Route path="/tickets" element={<TicketPage/>} />
+          <Route path='/core' />
 
           {/* Rutas protegidas para administradores */}
           <Route

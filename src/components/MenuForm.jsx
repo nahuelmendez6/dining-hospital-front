@@ -2,6 +2,18 @@ import React, { useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { generateTicket } from '../services/ticketService';
 
+
+import { FaCoffee, FaMugHot, FaGlassWhiskey, FaBreadSlice, FaCheese } from "react-icons/fa";
+
+
+const iconMap = {
+  cafe: <FaCoffee />,        // Icono de café
+  te: <FaMugHot />,          // Icono de taza caliente (para té)
+  leche: <FaGlassWhiskey />, // Usamos un vaso para representar leche (no hay icono específico leche)
+  tostadas: <FaBreadSlice />,// Icono de pan (para tostadas)
+  queso: <FaCheese />,       // Icono de queso
+};
+
 const MenuTicketForm = ({ menuItems }) => {
   const [pin, setPin] = useState('');
   const [selectedItems, setSelectedItems] = useState([]);
@@ -75,7 +87,7 @@ const MenuTicketForm = ({ menuItems }) => {
         <div className="card shadow-lg border-0 rounded-4 p-4">
           {!ticket ? (
             <>
-              <h2 className="text-center mb-4">Selección de Menú</h2>
+              <h2 className="text-center mb-4">Generar ticket</h2>
               {error && <div className="alert alert-danger">{error}</div>}
 
               <form onSubmit={handleSubmit}>
@@ -95,26 +107,37 @@ const MenuTicketForm = ({ menuItems }) => {
                 </div>
 
                 <div className="mb-4">
-                  <label className="form-label">Seleccione los ítems</label>
-                  <div className="row">
-                    {menuItems.map(item => (
-                      <div key={item.id} className="col-6 col-md-4 mb-2">
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            id={`item-${item.id}`}
-                            checked={selectedItems.includes(item.id)}
-                            onChange={() => handleItemChange(item.id)}
-                          />
-                          <label className="form-check-label" htmlFor={`item-${item.id}`}>
-                            {item.name}
-                          </label>
+                  <label className="form-label d-block">Seleccione los ítems</label>
+                  <div className="d-flex flex-wrap gap-3 justify-content-start">
+                    {menuItems.map(item => {
+                      const icon = iconMap[item.name.toLowerCase()];
+                      const isSelected = selectedItems.includes(item.id);
+
+                      return (
+                        <div
+                          key={item.id}
+                          onClick={() => handleItemChange(item.id)}
+                          className={`border rounded-3 text-center p-3 cursor-pointer ${
+                            isSelected ? 'bg-primary text-white' : 'bg-light'
+                          }`}
+                          style={{
+                            width: 90,
+                            height: 90,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            transition: '0.3s',
+                          }}
+                        >
+                          <div style={{ fontSize: 24 }}>{icon}</div>
+                          <small>{item.name}</small>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
+
 
                 <button type="submit" className="btn btn-primary w-100" disabled={loading}>
                   {loading ? (

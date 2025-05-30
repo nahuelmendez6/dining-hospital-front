@@ -11,6 +11,8 @@ import Reports from './pages/Reports';
 import TicketGenerator from './pages/TicketGenerator';
 import Unauthorized from './pages/Unauthorized';
 import TicketPage from './pages/TicketPage';
+import TicketList from './components/TicketList';
+import Layout from './components/Layout';
 
 function App() {
   return (
@@ -24,6 +26,18 @@ function App() {
           {/* <Route path="/tickets" element={<TicketGenerator />} /> */}
           <Route path="/tickets" element={<TicketPage/>} />
           <Route path='/core' />
+
+          {/* Rutas para personal de cocina */}
+          <Route
+            path="/ticket-list"
+            element={
+              <ProtectedRoute requiredGroups={['cocina']}>
+                <Layout>
+                  <TicketList />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
 
           {/* Rutas protegidas para administradores */}
           <Route

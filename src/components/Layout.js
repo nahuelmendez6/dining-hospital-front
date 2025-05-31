@@ -30,7 +30,12 @@ const Layout = ({ children }) => {
               Usuarios
             </Link>
           </li>
-
+          <li className={isActive('/ticket-list') ? 'active' : ''}>
+            <Link to="/tickets-table" className="d-flex align-items-center p-3 text-white">
+              <i className="bi bi-card-list me-2"></i>
+              Lista de tickets
+            </Link>
+          </li>
           <li className={isActive('/ticket-list') ? 'active' : ''}>
             <Link to="/ticket-list" className="d-flex align-items-center p-3 text-white">
               <i className="bi bi-people-fill me-2"></i>

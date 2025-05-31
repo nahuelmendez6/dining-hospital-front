@@ -103,3 +103,57 @@ export const getUsers = async (token) => {
         throw error;
     }
 };
+
+// funcion para actualizar un usuario existente
+export const updateUser = async (userId, userData, token) => {
+    try {
+        const requestData = {
+            first_name: userData.name,
+            last_name: userData.lastname,
+            email: userData.email,
+            // department_id: parseInt(userData.department),
+            department: parseInt(userData.department),
+            dni: userData.dni
+        };
+
+        console.log(`Actualizando usuario ID ${userId} con datos:`, JSON.stringify(requestData, null, 2));
+
+        const response = await axios.patch(`${API_URL}auth/edit-user/${userId}/`, requestData, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        return response;
+    } catch (error) {
+        console.error(`Error actualizando usuario ID ${userId}:`, {
+            message: error.message,
+            response: error.response?.data,
+            status: error.response?.status
+        });
+        throw error;
+    }
+};
+
+// funcion para eliminar un usuario
+export const deleteUser = async (userId, token) => {
+    try {
+        console.log(`Eliminando usuario ID ${userId}...`);
+        const response = await axios.delete(`${API_URL}auth/delete/user/${userId}/`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        return response;
+    } catch (error) {
+        console.error(`Error eliminando usuario ID ${userId}:`, {
+            message: error.message,
+            response: error.response?.data,
+            status: error.response?.status
+        });
+        throw error;
+    }
+};

@@ -13,6 +13,7 @@ import Unauthorized from './pages/Unauthorized';
 import TicketPage from './pages/TicketPage';
 import TicketList from './components/TicketList';
 import Layout from './components/Layout';
+import TicketsTable from './components/TicketsTable';
 
 function App() {
   return (
@@ -48,6 +49,16 @@ function App() {
               </ProtectedRoute>
             }
           />
+
+          <Route
+            path="/tickets-table"
+            element={
+              <ProtectedRoute requiredGroups={['admin']}>
+                <TicketsTable />
+              </ProtectedRoute>
+            }
+          />
+
           <Route
             path="/departments"
             element={

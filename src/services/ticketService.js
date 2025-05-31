@@ -134,3 +134,24 @@ export const generateTicket = async (pin, items) => {
         throw new Error(ERROR_MESSAGES.default);
     }
 };
+
+
+export const getTickets = async (token, date) => {
+    if (!token) throw new Error('Token no proporcionado');
+    try {
+        const response = await axios.get(`${API_URL}tickets/list/by-date/?date=${date}`, {
+            headers : {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error al obtener tickets:', {
+            message: error.message,
+            response: error.response?.data,
+            status: error.response?.status
+        });
+        throw error;
+    }
+}

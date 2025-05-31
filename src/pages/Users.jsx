@@ -3,11 +3,22 @@ import Layout from '../components/Layout';
 import { createUser, getDepartments, getUsers } from '../services/userSerive';
 import { useAuth } from '../contexts/AuthContext';
 
+import UserFormModal from '../components/UserFormModal';
+
+import { updateUser } from '../services/userSerive';
+
 const Users = () => {
   const [showModal, setShowModal] = useState(false);
   const [departments, setDepartments] = useState([]);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const [editing, setEditing] = useState(false);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+
+
   const { accessToken } = useAuth();
 
   const [formData, setFormData] = useState({
@@ -17,6 +28,21 @@ const Users = () => {
     department: '',
     dni: ''
   });
+
+
+  const handleEditClick = (user) => {
+    setFormData({
+      name: user.first_name,
+      lastname: user.last_name,
+      email: user.email,
+      department: user.department?.id || '',
+      dni: user.dni
+    });
+    setSelectedUser(user);
+    setEditing(true); // ← IMPORTANTE
+    setIsModalOpen(true);
+  }
+  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -69,53 +95,70 @@ const Users = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+  
     if (!formData.name || !formData.lastname || !formData.email || !formData.department || !formData.dni) {
       alert('Por favor, complete todos los campos requeridos');
       return;
     }
-
+  
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
       alert('Por favor, ingrese un email válido');
       return;
     }
-
+  
     const dniRegex = /^\d+$/;
     if (!dniRegex.test(formData.dni)) {
       alert('Por favor, ingrese un DNI válido (solo números)');
       return;
     }
-
+  
     try {
-      console.log('Datos del formulario antes de enviar:', formData);
-      const response = await createUser(formData, accessToken);
-      
-      if (response.data) {
+      const userPayload = {
+        first_name: formData.name,
+        last_name: formData.lastname,
+        email: formData.email,
+        department: formData.department,
+        dni: formData.dni
+      };
+  
+      if (editing && selectedUser) {
+        // Modo edición
+        console.log('Editando usuario...', selectedUser.id);
+        await updateUser(selectedUser.id, userPayload, accessToken);
+        alert('Usuario actualizado exitosamente');
+      } else {
+        // Modo creación
+        console.log('Creando nuevo usuario...');
+        await createUser(userPayload, accessToken);
         alert('Usuario creado exitosamente');
-        setShowModal(false);
-        setFormData({
-          name: '',
-          lastname: '',
-          email: '',
-          department: '',
-          dni: ''
-        });
-        // Refresh users list after creating a new user
-        const usersData = await getUsers(accessToken);
-        setUsers(Array.isArray(usersData) ? usersData : []);
       }
+  
+      // Limpiar estado
+      setFormData({
+        name: '',
+        lastname: '',
+        email: '',
+        department: '',
+        dni: ''
+      });
+      setEditing(false);
+      setSelectedUser(null);
+      setIsModalOpen(false);
+      setShowModal(false);
+  
+      // Refrescar lista
+      const usersData = await getUsers(accessToken);
+      setUsers(Array.isArray(usersData) ? usersData : []);
     } catch (error) {
-      console.error('Error en la creación del usuario:', error);
-      let errorMessage = 'Error al crear el usuario. ';
+      console.error('Error al guardar el usuario:', error);
+      let errorMessage = 'Error al guardar el usuario. ';
       
       try {
         const errorData = JSON.parse(error.message);
         if (typeof errorData === 'object') {
           if (errorData.detail) {
             errorMessage += errorData.detail;
-          } else if (errorData.message) {
-            errorMessage += errorData.message;
           } else {
             const errorDetails = Object.entries(errorData)
               .map(([field, messages]) => `${field}: ${messages.join(', ')}`)
@@ -128,10 +171,25 @@ const Users = () => {
       } catch {
         errorMessage += error.message;
       }
-      
+  
       alert(errorMessage);
     }
   };
+  
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setShowModal(false);
+    setEditing(false);
+    setSelectedUser(null);
+    setFormData({
+      name: '',
+      lastname: '',
+      email: '',
+      department: '',
+      dni: ''
+    });
+  };
+  
 
   return (
     <Layout>
@@ -183,7 +241,7 @@ const Users = () => {
                         <td>{user.email}</td>
                         <td>{user.department?.name || 'N/A'}</td>
                         <td>
-                          <button className="btn btn-sm btn-outline-primary me-2">
+                          <button className="btn btn-sm btn-outline-primary me-2" onClick={() => handleEditClick(user)}>
                             <i className="bi bi-pencil"></i>
                           </button>
                           <button className="btn btn-sm btn-outline-danger">
@@ -198,6 +256,17 @@ const Users = () => {
             </div>
           </div>
         </div>
+
+        {/* Modal de edicion de usuario */}
+        <UserFormModal
+          isOpen={isModalOpen}
+          closeModal={() => setIsModalOpen(false)}
+          onSubmit={handleSubmit}
+          formData={formData}
+          onChange={handleInputChange}
+          departments={departments}
+          editing={editing}
+        />
 
         {/* Modal de Creación de Usuario */}
         {showModal && (

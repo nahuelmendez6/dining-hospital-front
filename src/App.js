@@ -14,6 +14,8 @@ import TicketPage from './pages/TicketPage';
 import TicketList from './components/TicketList';
 import Layout from './components/Layout';
 import TicketsTable from './components/TicketsTable';
+import DepartmentDashboard from './components/DepartmentDashboard';
+import MenuManager from './components/MenuManager';
 
 function App() {
   return (
@@ -51,6 +53,15 @@ function App() {
           />
 
           <Route
+            path="/departments"
+            element={
+              <ProtectedRoute requiredGroups={['admin']}>
+                <DepartmentDashboard />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
             path="/tickets-table"
             element={
               <ProtectedRoute requiredGroups={['admin']}>
@@ -67,6 +78,17 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/menu"
+            element={
+              <ProtectedRoute requiredGroups={['admin']}>
+                <Layout>
+                  <MenuManager />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+
           <Route
             path="/reports"
             element={

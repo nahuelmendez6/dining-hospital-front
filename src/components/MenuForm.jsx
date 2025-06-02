@@ -2,17 +2,47 @@ import React, { useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { generateTicket } from '../services/ticketService';
 
-
-import { FaCoffee, FaMugHot, FaGlassWhiskey, FaBreadSlice, FaCheese } from "react-icons/fa";
-
+import {
+  FaCoffee,
+  FaMugHot,
+  FaGlassWhiskey,
+  FaCheese,
+  FaEgg,
+  FaBreadSlice,
+  FaAppleAlt,
+  FaLemon,
+  FaIceCream,
+  FaWineGlass,
+  FaCookie,
+  FaUtensils,
+  FaQuestion,
+} from "react-icons/fa";
 
 const iconMap = {
-  cafe: <FaCoffee />,        // Icono de café
-  te: <FaMugHot />,          // Icono de taza caliente (para té)
-  leche: <FaGlassWhiskey />, // Usamos un vaso para representar leche (no hay icono específico leche)
-  tostadas: <FaBreadSlice />,// Icono de pan (para tostadas)
-  queso: <FaCheese />,       // Icono de queso
+  FaCoffee,
+  FaMugHot,
+  FaGlassWhiskey,
+  FaCheese,
+  FaEgg,
+  FaBreadSlice,
+  FaAppleAlt,
+  FaLemon,
+  FaIceCream,
+  FaWineGlass,
+  FaCookie,
+  FaUtensils,
 };
+
+// import { FaCoffee, FaMugHot, FaGlassWhiskey, FaBreadSlice, FaCheese } from "react-icons/fa";
+
+
+// const iconMap = {
+//   cafe: <FaCoffee />,        // Icono de café
+//   te: <FaMugHot />,          // Icono de taza caliente (para té)
+//   leche: <FaGlassWhiskey />, // Usamos un vaso para representar leche (no hay icono específico leche)
+//   tostadas: <FaBreadSlice />,// Icono de pan (para tostadas)
+//   queso: <FaCheese />,       // Icono de queso
+// };
 
 const MenuTicketForm = ({ menuItems }) => {
   const [pin, setPin] = useState('');
@@ -110,7 +140,10 @@ const MenuTicketForm = ({ menuItems }) => {
                   <label className="form-label d-block">Seleccione los ítems</label>
                   <div className="d-flex flex-wrap gap-3 justify-content-start">
                     {menuItems.map(item => {
-                      const icon = iconMap[item.name.toLowerCase()];
+                      console.log("Item icon_name:", item.icon_name, "Keys in iconMap:", Object.keys(iconMap));
+
+                      console.log("Nombre:", item.name, "Ícono:", item.icon_name, "¿Existe?", iconMap[item.icon_name]);
+                      const Icon = iconMap[item.icon_name] || FaQuestion; 
                       const isSelected = selectedItems.includes(item.id);
 
                       return (
@@ -130,7 +163,7 @@ const MenuTicketForm = ({ menuItems }) => {
                             transition: '0.3s',
                           }}
                         >
-                          <div style={{ fontSize: 24 }}>{icon}</div>
+                          <div style={{ fontSize: 24 }}><Icon /></div>
                           <small>{item.name}</small>
                         </div>
                       );

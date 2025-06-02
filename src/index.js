@@ -6,6 +6,19 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { AuthProvider } from './contexts/AuthContext';
+import axios from 'axios'; 
+
+// Configurar interceptor global para agregar el token JWT a todas las peticiones
+axios.interceptors.request.use(
+  config => {
+    const token = localStorage.getItem('access_token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  error => Promise.reject(error)
+);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -16,4 +29,4 @@ root.render(
   </React.StrictMode>
 );
 
-reportWebVitals(); 
+reportWebVitals();

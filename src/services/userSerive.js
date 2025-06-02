@@ -45,19 +45,20 @@ export const createUser = async (userData, token) => {
 };
 
 // funcion para obtener departamentos
+/** */
 export const getDepartments = async (token) => {
     if (!token) {
         throw new Error('Token no proporcionado');
     }
     
     try {
-        console.log('URL de la petición:', `${API_URL}core/list/departments`);
+        console.log('URL de la petición:', `${API_URL}core/list-departments`);
         console.log('Headers enviados:', {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
         });
 
-        const response = await axios.get(`${API_URL}core/list/departments`, {
+        const response = await axios.get(`${API_URL}core/list-departments`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'

@@ -30,6 +30,12 @@ const Layout = ({ children }) => {
               Usuarios
             </Link>
           </li>
+          <li className={isActive('/users') ? 'active' : ''}>
+            <Link to="/departments" className="d-flex align-items-center p-3 text-white">
+              <i className="bi bi-people me-2"></i>
+              Departamentos
+            </Link>
+          </li>
           <li className={isActive('/ticket-list') ? 'active' : ''}>
             <Link to="/tickets-table" className="d-flex align-items-center p-3 text-white">
               <i className="bi bi-card-list me-2"></i>
@@ -49,16 +55,16 @@ const Layout = ({ children }) => {
               Tickets
             </Link>
           </li>
-          <li className={isActive('/departments') ? 'active' : ''}>
-            <Link to="/departments" className="d-flex align-items-center p-3 text-white">
-              <i className="bi bi-building me-2"></i>
-              Departamentos
-            </Link>
-          </li>
           <li className={isActive('/shifts') ? 'active' : ''}>
             <Link to="/shifts" className="d-flex align-items-center p-3 text-white">
               <i className="bi bi-clock-fill me-2"></i>
               Turnos
+            </Link>
+          </li>
+          <li className={isActive('/reports') ? 'active' : ''}>
+            <Link to="/menu" className="d-flex align-items-center p-3 text-white">
+              <i className="bi bi-graph-up me-2"></i>
+              Menu
             </Link>
           </li>
           <li className={isActive('/reports') ? 'active' : ''}>

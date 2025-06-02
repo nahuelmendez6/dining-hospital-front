@@ -160,6 +160,8 @@ export const AuthProvider = ({ children }) => {
         },
         body: JSON.stringify({ username, password })
       });
+
+     
       
       console.log('Respuesta del servidor:', response.status);
       
@@ -171,7 +173,8 @@ export const AuthProvider = ({ children }) => {
 
       const data = await response.json();
       console.log('Login exitoso, configurando sesión');
-      
+
+
       if (data.access && data.refresh) {
         localStorage.setItem('accessToken', data.access);
         localStorage.setItem('refreshToken', data.refresh);

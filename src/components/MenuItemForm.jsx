@@ -19,7 +19,7 @@ const icons = [
 
 const API_URL = 'http://localhost:8000/';
 
-function MenuItemForm({ initialItem, onItemCreated, onCancel }) {
+function MenuItemForm({ initialItem, onSubmit, onCancel }) {
   const [name, setName] = useState("");
   const [icon_name, setIcon] = useState("FaCoffee");
   const [stock, setStock] = useState(0);
@@ -41,7 +41,12 @@ function MenuItemForm({ initialItem, onItemCreated, onCancel }) {
     const data = { name, icon_name, stock };
 
     if (initialItem) {
-      await axios.patch(`${API_URL}core/edit/menu-item/${initialItem.id}/`, data);
+      const token = localStorage.getItem('accessToken');
+      const headers = {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      };
+      await axios.patch(`${API_URL}core/edit/menu-item/${initialItem.id}/`, data, { headers });
       alert("Ítem actualizado correctamente");
     } else {
       await axios.post(`${API_URL}core/menu-items/`, data);
@@ -52,7 +57,7 @@ function MenuItemForm({ initialItem, onItemCreated, onCancel }) {
     setIcon("FaCoffee");
     setStock(0);
 
-    if (onItemCreated) onItemCreated();
+    if (onSubmit) onSubmit();
   };
 
   const Icon = FaIcons[icon_name] || FaIcons.FaQuestion;

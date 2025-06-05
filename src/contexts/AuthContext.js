@@ -61,8 +61,10 @@ export const AuthProvider = ({ children }) => {
           email: userData.email,
           first_name: userData.first_name || '',
           last_name: userData.last_name || '',
+          department_id: userData.department_id,
           groups: userData.groups || []
         };
+        console.log(profile)
         
         setUserProfile(profile);
         setGroups(profile.groups);

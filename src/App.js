@@ -16,6 +16,7 @@ import Layout from './components/Layout';
 import TicketsTable from './components/TicketsTable';
 import DepartmentDashboard from './components/DepartmentDashboard';
 import MenuManager from './components/MenuManager';
+import ShiftsTable from './components/ShiftsTable';
 
 function App() {
   return (
@@ -78,6 +79,16 @@ function App() {
               </ProtectedRoute>
             }
           />
+
+          <Route
+            path="/shifts"
+            element={
+              <ProtectedRoute requiredGroups={['admin']}>
+                <ShiftsTable />
+              </ProtectedRoute>
+            }
+          />
+
           <Route
             path="/menu"
             element={

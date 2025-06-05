@@ -195,7 +195,10 @@ const Users = () => {
     <Layout>
       <div className="container-fluid p-4">
         <div className="d-flex justify-content-between align-items-center mb-4">
-          <h2>Gestión de Usuarios</h2>
+         
+          <h2>
+          <i className="bi bi-person-gear me-2"></i>
+            Gestión de Usuarios</h2>
           <button 
             className="btn btn-primary btn-lg" 
             onClick={() => setShowModal(true)}

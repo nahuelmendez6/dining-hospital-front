@@ -29,9 +29,8 @@ const Layout = ({ children }) => {
     return location.pathname === path;
   };
 
-  const isAdmin = userProfile?.department?.id === 1;
-  const isKitchen = userProfile?.department?.id === 3;
-
+  const isAdmin = userProfile?.groups?.includes("admin");
+  const isKitchen = userProfile?.groups?.includes("cocina");
   const renderMenuItems = () => {
     const menuItems = [];
 
@@ -48,6 +47,12 @@ const Layout = ({ children }) => {
           <Link to="/departments" className="d-flex align-items-center p-3 text-white">
             <i className="bi bi-building me-2"></i>
             Departamentos
+          </Link>
+        </li>,
+        <li key="shifts" className={isActive('/shifts') ? 'active' : ''}>
+          <Link to="/shifts" className="d-flex align-items-center p-3 text-white">
+            <i className="bi bi-clock-history me-2"></i>
+            Turnos
           </Link>
         </li>,
         <li key="tickets-table" className={isActive('/tickets-table') ? 'active' : ''}>

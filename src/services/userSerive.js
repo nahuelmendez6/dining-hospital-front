@@ -7,12 +7,13 @@ export const createUser = async (userData, token) => {
     try {
         // Preparar los datos exactamente como los espera el backend
         const requestData = {
-            first_name: userData.name,
-            last_name: userData.lastname,
+            first_name: userData.first_name,
+            last_name: userData.last_name,
             email: userData.email,
-            department_id: parseInt(userData.department),
-            department: parseInt(userData.department),
-            dni: userData.dni
+            // department_id: parseInt(userData.department),
+            // department: parseInt(userData.department),
+            dni: userData.dni,
+            group: userData.group
         };
 
         console.log('Datos exactos que se envían al servidor:', JSON.stringify(requestData, null, 2));
@@ -109,12 +110,13 @@ export const getUsers = async (token) => {
 export const updateUser = async (userId, userData, token) => {
     try {
         const requestData = {
-            first_name: userData.name,
-            last_name: userData.lastname,
+            first_name: userData.first_namename,
+            last_name: userData.last_name,
             email: userData.email,
             // department_id: parseInt(userData.department),
-            department: parseInt(userData.department),
-            dni: userData.dni
+            // department: parseInt(userData.department),
+            dni: userData.dni,
+            group: userData.group
         };
 
         console.log(`Actualizando usuario ID ${userId} con datos:`, JSON.stringify(requestData, null, 2));

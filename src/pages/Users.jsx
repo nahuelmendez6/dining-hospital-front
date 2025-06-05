@@ -22,20 +22,21 @@ const Users = () => {
   const { accessToken } = useAuth();
 
   const [formData, setFormData] = useState({
-    name: '',
-    lastname: '',
+    first_name: '',
+    last_name: '',
     email: '',
-    department: '',
-    dni: ''
+    // department: '',
+    dni: '',
+    group: '',
   });
 
 
   const handleEditClick = (user) => {
     setFormData({
-      name: user.first_name,
-      lastname: user.last_name,
+      first_name: user.first_name,
+      last_name: user.last_name,
       email: user.email,
-      department: user.department?.id || '',
+      // department: user.department?.id || '',
       dni: user.dni
     });
     setSelectedUser(user);
@@ -96,7 +97,7 @@ const Users = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
   
-    if (!formData.name || !formData.lastname || !formData.email || !formData.department || !formData.dni) {
+    if (!formData.first_name || !formData.last_name || !formData.email || /*!formData.department ||*/ !formData.dni) {
       alert('Por favor, complete todos los campos requeridos');
       return;
     }
@@ -115,11 +116,12 @@ const Users = () => {
   
     try {
       const userPayload = {
-        first_name: formData.name,
-        last_name: formData.lastname,
+        first_name: formData.first_name,
+        last_name: formData.last_name,
         email: formData.email,
-        department: formData.department,
-        dni: formData.dni
+        // department: formData.department,
+        dni: formData.dni,
+        group:formData.group
       };
   
       if (editing && selectedUser) {
@@ -136,11 +138,12 @@ const Users = () => {
   
       // Limpiar estado
       setFormData({
-        name: '',
-        lastname: '',
+        first_name: '',
+        last_name: '',
         email: '',
-        department: '',
-        dni: ''
+        // department: '',
+        dni: '',
+        group: '',
       });
       setEditing(false);
       setSelectedUser(null);
@@ -182,10 +185,10 @@ const Users = () => {
     setEditing(false);
     setSelectedUser(null);
     setFormData({
-      name: '',
-      lastname: '',
+      first_name: '',
+      last_name: '',
       email: '',
-      department: '',
+      // department: '',
       dni: ''
     });
   };
@@ -267,7 +270,7 @@ const Users = () => {
           onSubmit={handleSubmit}
           formData={formData}
           onChange={handleInputChange}
-          departments={departments}
+          // departments={departments}
           editing={editing}
         />
 
@@ -291,8 +294,8 @@ const Users = () => {
                       <input
                         type="text"
                         className="form-control"
-                        name="name"
-                        value={formData.name}
+                        name="first_name"
+                        value={formData.first_name}
                         onChange={handleInputChange}
                         required
                         placeholder="Ingrese el nombre"
@@ -303,8 +306,8 @@ const Users = () => {
                       <input
                         type="text"
                         className="form-control"
-                        name="lastname"
-                        value={formData.lastname}
+                        name="last_name"
+                        value={formData.last_name}
                         onChange={handleInputChange}
                         required
                         placeholder="Ingrese el apellido"
@@ -336,6 +339,21 @@ const Users = () => {
                       />
                     </div>
                     <div className="mb-3">
+                      <label className="form-label">Grupo</label>
+                      <select
+                        className="form-select"
+                        name="group"
+                        value={formData.group}
+                        onChange={handleInputChange}
+                        required
+                      >
+                        <option value="">Seleccione un grupo...</option>
+                        <option value="admin">Administrador</option>
+                        <option value="hospital">Hospital</option>
+                        <option value="cocina">Cocina</option>
+                      </select>
+                    </div>
+                    {/* <div className="mb-3">
                       <label className="form-label">Departamento</label>
                       <select
                         className="form-select"
@@ -358,7 +376,7 @@ const Users = () => {
                       {departments.length === 0 && (
                         <small className="text-muted">Cargando departamentos...</small>
                       )}
-                    </div>
+                    </div> */}
                     <div className="modal-footer">
                       <button 
                         type="button" 

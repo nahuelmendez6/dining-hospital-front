@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
+import logonavbar from "../assets/logo-navbar.png";
+
 const Layout = ({ children }) => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const { user, userProfile, logout } = useAuth();
@@ -43,12 +45,12 @@ const Layout = ({ children }) => {
             Usuarios
           </Link>
         </li>,
-        <li key="departments" className={isActive('/departments') ? 'active' : ''}>
-          <Link to="/departments" className="d-flex align-items-center p-3 text-white">
-            <i className="bi bi-building me-2"></i>
-            Departamentos
-          </Link>
-        </li>,
+        // <li key="departments" className={isActive('/departments') ? 'active' : ''}>
+        //   <Link to="/departments" className="d-flex align-items-center p-3 text-white">
+        //     <i className="bi bi-building me-2"></i>
+        //     Departamentos
+        //   </Link>
+        // </li>,
         <li key="shifts" className={isActive('/shifts') ? 'active' : ''}>
           <Link to="/shifts" className="d-flex align-items-center p-3 text-white">
             <i className="bi bi-clock-history me-2"></i>
@@ -61,12 +63,12 @@ const Layout = ({ children }) => {
             Tabla de Tickets
           </Link>
         </li>,
-        <li key="tickets" className={isActive('/tickets') ? 'active' : ''}>
-          <Link to="/tickets" className="d-flex align-items-center p-3 text-white">
-            <i className="bi bi-ticket-perforated me-2"></i>
-            Gestión de Tickets
-          </Link>
-        </li>,
+        // <li key="tickets" className={isActive('/tickets') ? 'active' : ''}>
+        //   <Link to="/tickets" className="d-flex align-items-center p-3 text-white">
+        //     <i className="bi bi-ticket-perforated me-2"></i>
+        //     Gestión de Tickets
+        //   </Link>
+        // </li>,
         <li key="menu" className={isActive('/menu') ? 'active' : ''}>
           <Link to="/menu" className="d-flex align-items-center p-3 text-white">
             <i className="bi bi-journal-text me-2"></i>
@@ -112,7 +114,12 @@ const Layout = ({ children }) => {
       {/* Sidebar */}
       <nav id="sidebar" className={`bg-dark text-white ${sidebarCollapsed ? 'collapsed' : ''}`}>
         <div className="sidebar-header p-3">
-          <h3>Comedor Hospital</h3>
+          <img
+                src={logonavbar}
+                alt="Logo"
+                className="img-fluid d-block mx-auto mb-4"
+                style={{ maxWidth: '150px' }}
+              />
         </div>
 
         <ul className="list-unstyled components">

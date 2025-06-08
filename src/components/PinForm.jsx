@@ -60,6 +60,7 @@ const PinForm = () => {
 
           {!ticket ? (
             <form onSubmit={handleSubmit}>
+              <h2 className="text-center mb-4">Generar ticket</h2>
               <div className="mb-3">
                 <label htmlFor="pin" className="form-label">Ingrese su PIN</label>
                 <input

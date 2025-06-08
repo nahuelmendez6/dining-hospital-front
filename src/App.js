@@ -17,6 +17,10 @@ import TicketsTable from './components/TicketsTable';
 import DepartmentDashboard from './components/DepartmentDashboard';
 import MenuManager from './components/MenuManager';
 import ShiftsTable from './components/ShiftsTable';
+import TicketChart from './components/TicketChart';
+
+
+import TestRef from './components/TestRef';
 
 function App() {
   return (
@@ -27,6 +31,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/login-pin" element={<LoginPin />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
+          <Route path='/test' element={<TestRef />} />
           {/* <Route path="/tickets" element={<TicketGenerator />} /> */}
           <Route path="/tickets" element={<TicketPage/>} />
           <Route path='/core' />
@@ -104,7 +109,7 @@ function App() {
             path="/reports"
             element={
               <ProtectedRoute requiredGroups={['admin']}>
-                <Reports />
+                <TicketChart/>
               </ProtectedRoute>
             }
           />

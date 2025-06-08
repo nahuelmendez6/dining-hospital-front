@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
+import logo from '../assets/logo.jpg'; 
+
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -29,7 +31,13 @@ const Login = () => {
         <div className="col-12 col-md-6 col-lg-4">
           <div className="card shadow">
             <div className="card-body p-4">
-              <h1 className="text-center mb-4">Comedor Hospitalario</h1>
+              {/* <h1 className="text-center mb-4">Comedor Hospitalario</h1> */}
+              <img
+                src={logo}
+                alt="Logo"
+                className="img-fluid d-block mx-auto mb-4"
+                style={{ maxWidth: '150px' }}
+              />
               
               <form onSubmit={handleSubmit} className="needs-validation" noValidate>
                 <div className="mb-3">

@@ -11,7 +11,7 @@ const Dashboard = () => {
         <div className="col-12">
           <div className="card">
             <div className="card-body">
-              <h5 className="card-title">Bienvenido al Sistema de Comedor Hospitalario</h5>
+              <h5 className="card-title">Bienvenido al Sistema de TicMeal de gestión de comedores</h5>
               <p className="card-text">Seleccione una opción del menú lateral para comenzar.</p>
             </div>
           </div>

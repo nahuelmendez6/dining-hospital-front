@@ -19,6 +19,7 @@ import MenuManager from './components/MenuManager';
 import ShiftsTable from './components/ShiftsTable';
 import TicketChart from './components/TicketChart';
 
+import './App.css'
 
 import TestRef from './components/TestRef';
 

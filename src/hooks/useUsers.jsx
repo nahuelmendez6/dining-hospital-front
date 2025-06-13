@@ -38,11 +38,17 @@ export const useUsers = () => {
     }, [accessToken]);
 
     const saveUser = async (data, editing = false, userId = null) => {
+        
+        // esta funcion maneja la creacion o edicion de usuarios
+
         if (editing && userId) {
             await updateUser(accessToken, userId, data);
         } else {
             await createUser(data, accessToken);
         }
+
+        // una vez que se creo un nuevo usuario o se edito uno existente
+        // se recarga la lista de usuarios
         await fetchData();
     };
 

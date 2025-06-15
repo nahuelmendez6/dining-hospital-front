@@ -8,6 +8,9 @@ import reportWebVitals from './reportWebVitals';
 import { AuthProvider } from './contexts/AuthContext';
 import axios from 'axios'; 
 
+import 'bootstrap-icons/font/bootstrap-icons.css';
+
+
 // Configurar interceptor global para agregar el token JWT a todas las peticiones
 axios.interceptors.request.use(
   config => {

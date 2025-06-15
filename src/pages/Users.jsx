@@ -3,6 +3,7 @@ import Layout from "../components/Layout";
 import UsersTable from "../components/users/UsersTable";
 import UserCreateModal from '../components/users/UserCreateModal';
 import UserFormModal from '../components/users/UserFormModal';
+import UserStatsCards from '../components/users/UserStatsCards';
 
 import { useUsers } from '../hooks/useUsers';
 
@@ -53,6 +54,7 @@ const Users = () => {
 
   return (
     <Layout>
+      <UserStatsCards />
       <div className="container-fluid p-4">
         <div className="d-flex justify-content-between align-items-center mb-4">
           <h2><i className="bi bi-person-gear me-2"></i>Gestión de Usuarios</h2>
@@ -64,6 +66,9 @@ const Users = () => {
             <UsersTable users={users} loading={loading} onEdit={handleEditClick} />
           </div>
         </div>
+
+        
+
 
         <UserFormModal
           isOpen={isModalOpen}

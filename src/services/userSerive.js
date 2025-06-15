@@ -79,6 +79,31 @@ export const getDepartments = async (token) => {
     }
 }
 
+// funcion para obtener estadisticas de usuarios
+export const getUserStats = async(token) => {
+    if (!token) {
+        throw new Error('Token no proporcionado');
+    }
+    try {
+        console.log('Obteniendo estadisticas de usuarios...');
+        const response = await axios.get(`${API_URL}reports/user-stats/`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        console.log('Respuesta :', response.data);
+        return response.data;
+    } catch (error) {
+        console.error('Error en getUsers:', {
+            message: error.message,
+            response: error.response?.data,
+            status: error.response?.status
+        });
+        throw error;
+    }
+}
+
 // funcion para obtener usuarios
 export const getUsers = async (token) => {
     if (!token) {

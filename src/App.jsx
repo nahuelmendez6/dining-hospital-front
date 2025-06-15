@@ -13,11 +13,14 @@ import Unauthorized from './pages/Unauthorized';
 import TicketPage from './pages/TicketPage';
 import TicketList from './components/TicketList';
 import Layout from './components/Layout';
-import TicketsTable from './components/TicketsTable';
+import TicketsTable from './components/tickets/TicketsTable';
 import DepartmentDashboard from './components/DepartmentDashboard';
 import MenuManager from './components/MenuManager';
 import ShiftsTable from './components/ShiftsTable';
 import TicketChart from './components/TicketChart';
+
+import 'bootstrap-icons/font/bootstrap-icons.css';
+
 
 import './App.css'
 

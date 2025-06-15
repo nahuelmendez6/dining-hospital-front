@@ -155,3 +155,5 @@ export const getTickets = async (token, date) => {
         throw error;
     }
 }
+
+

@@ -6,19 +6,31 @@ import DateFilter from './DateFilter';
 import TicketRow from './TicketRow';
 import LoadingRow from './LoadingRow';
 import EmptyRow from './EmptyRow';
+import TicketSummaryCards from './TicketShitSummaryCards';
+
+import { getTicketCountByShift } from '../../services/reportService';
 
 const TicketsTable = () => {
   const { accessToken: token } = useAuth();
   const [tickets, setTickets] = useState([]);
-  const [selectedDate, setSelectedDate] = useState(() => new Date().toISOString().split('T')[0]);
+  // const [selectedDate, setSelectedDate] = useState(() => new Date().toISOString().split('T')[0]);
   const [isLoading, setIsLoading] = useState(true);
+
+  const [summary, setSummary] = useState([]);
+  
+  const [selectedDate, setSelectedDate] = useState(() => {
+    const today = new Date();
+    return today.toISOString().split('T')[0];
+  });
 
   const fetchTickets = async (date) => {
     if (!token) return;
     setIsLoading(true);
     try {
       const data = await getTickets(token, date);
+      const summary_data = await getTicketCountByShift(token, date);
       setTickets(data);
+      setSummary(summary_data);
     } catch (error) {
       console.error('Error al obtener tickets:', error);
     } finally {
@@ -37,6 +49,8 @@ const TicketsTable = () => {
           <h2 className="mb-0"><i className="bi bi-ticket-detailed me-2"></i>Gestión de Tickets</h2>
           <DateFilter value={selectedDate} onChange={setSelectedDate} />
         </div>
+
+        <TicketSummaryCards summary={summary} />
 
         <div className="card shadow-sm border-0">
           <div className="card-body table-responsive">

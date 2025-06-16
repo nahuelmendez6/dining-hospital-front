@@ -17,7 +17,7 @@ const Users = () => {
   const [selectedUser, setSelectedUser] = useState(null);
 
   const [formData, setFormData] = useState({
-    first_name: '', last_name: '', email: '', dni: '', group: ''
+    first_name: '', last_name: '', email: '', dni: '', group: '', observations: []
   });
 
   const handleInputChange = e => {

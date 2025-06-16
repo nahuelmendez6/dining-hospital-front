@@ -45,6 +45,35 @@ export const createUser = async (userData, token) => {
     }
 };
 
+
+// funcion para obtener observaciones
+export const getObservations = async (token) => {
+    if (!token) {
+        throw new Error('Token no proporcionado');
+    }
+
+    try {
+        const response = await axios.get(`${API_URL}auth/get-observations/`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        console.log("Respuesta getObservations:", response.data);
+        return response.data;
+    } catch (error) {
+        console.error('Error en getDepartments:', {
+            message: error.message,
+            response: error.response?.data,
+            status: error.response?.status,
+            headers: error.response?.headers
+        });
+        throw error;
+    }
+}
+
+
+
 // funcion para obtener departamentos
 /** */
 export const getDepartments = async (token) => {

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getDepartments, getUsers, createUser, updateUser } from '../services/userSerive';
+import { getDepartments, getUsers, createUser, updateUser } from '../services/userService';
 import { useAuth } from '../contexts/AuthContext';
 
 export const useUsers = () => {

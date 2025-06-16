@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-import { getDepartments } from '../services/userSerive'; // Ajusta la ruta si es necesario
+import { getDepartments } from '../services/userService'; // Ajusta la ruta si es necesario
 import { useAuth } from '../contexts/AuthContext';  // <-- Importar el contexto
 import Layout from '../components/Layout';
 

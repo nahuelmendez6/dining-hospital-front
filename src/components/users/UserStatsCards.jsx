@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { getUserStats } from "../../services/userSerive";
+import { getUserStats } from "../../services/userService";
 import AuthContext from "../../contexts/AuthContext";
 
 const iconMap = {

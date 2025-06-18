@@ -38,9 +38,14 @@ const Users = () => {
     setIsModalOpen(true);
   }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    await saveUser(formData, editing, selectedUser?.id);
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   await saveUser(formData, editing, selectedUser?.id);
+  //   resetForm();
+  // };
+
+  const handleSubmit = async (userData) => {
+    await saveUser(userData, editing, selectedUser?.id);
     resetForm();
   };
 

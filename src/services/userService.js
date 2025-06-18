@@ -13,7 +13,8 @@ export const createUser = async (userData, token) => {
             // department_id: parseInt(userData.department),
             // department: parseInt(userData.department),
             dni: userData.dni,
-            group: userData.group
+            group: userData.group,
+            observations: userData.observations,
         };
 
         console.log('Datos exactos que se envían al servidor:', JSON.stringify(requestData, null, 2));

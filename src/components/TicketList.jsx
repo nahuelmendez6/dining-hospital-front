@@ -1,4 +1,20 @@
 import React, { useEffect, useState } from "react";
+import * as FaIcons from "react-icons/fa";
+import * as GiIcons from "react-icons/gi";
+import * as MdIcons from "react-icons/md";
+
+const iconLibraries = {
+  Fa: FaIcons,
+  Gi: GiIcons,
+  Md: MdIcons,
+};
+
+function getIconComponent(iconName) {
+  if (!iconName || iconName.length < 2) return null;
+  const prefix = iconName.slice(0, 2); // Fa, Gi, Md
+  const lib = iconLibraries[prefix];
+  return lib ? lib[iconName] : null;
+}
 
 const TicketList = () => {
   const [tickets, setTickets] = useState([]);
@@ -68,15 +84,43 @@ const TicketList = () => {
                   <h5 className="text-secondary">Ítems seleccionados:</h5>
                   <ul className="list-group list-group-flush">
                     {ticket.items.map((item, index) => (
-                      <li key={index} className="list-group-item d-flex justify-content-between align-items-center">
+                      <li
+                        key={index}
+                        className="list-group-item d-flex justify-content-between align-items-center"
+                      >
                         <span>{item.name}</span>
-                        <span className="badge bg-primary rounded-pill">{item.quantity}</span>
+                        <span className="badge bg-primary rounded-pill">
+                          {item.quantity}
+                        </span>
                       </li>
                     ))}
                   </ul>
                 </div>
               )}
 
+              {ticket.observations && ticket.observations.length > 0 && (
+                <div className="mt-3">
+                  <h6 className="text-secondary">Observaciones del Usuario:</h6>
+                  <div className="d-flex flex-wrap gap-2 mt-2">
+                    {ticket.observations.map((obs, index) => {
+                      const IconComponent = getIconComponent(obs.icon);
+                      return (
+                        <span
+                          key={index}
+                          className="badge rounded-pill bg-info-subtle text-info-emphasis d-flex align-items-center gap-2 px-3 py-2"
+                        >
+                          {IconComponent ? (
+                            <IconComponent />
+                          ) : (
+                            <i className="bi bi-exclamation-triangle"></i>
+                          )}
+                          {obs.name}
+                        </span>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
 
               <div className="text-start small">
                 <p className="mb-1">
@@ -92,8 +136,6 @@ const TicketList = () => {
                   <strong>Hora:</strong> {formatTime(ticket.date)}
                 </p>
               </div>
-
-
             </div>
           </div>
         ))}

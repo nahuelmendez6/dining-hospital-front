@@ -1,10 +1,12 @@
 import * as FaIcons from "react-icons/fa";
 
+import { foodIcons } from "../icons/foodIcons";
+
 function MenuList({ items, onEdit, onDelete }) {
   return (
     <div className="row">
       {items.map((item) => {
-        const Icon = FaIcons[item.icon_name] || FaIcons.FaQuestion;
+        const Icon = foodIcons[item.icon_name] || FaIcons.FaQuestion;
 
         return (
           <div key={item.id} className="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">

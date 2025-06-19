@@ -2,47 +2,10 @@ import React, { useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { generateTicket } from '../services/ticketService';
 
-import {
-  FaCoffee,
-  FaMugHot,
-  FaGlassWhiskey,
-  FaCheese,
-  FaEgg,
-  FaBreadSlice,
-  FaAppleAlt,
-  FaLemon,
-  FaIceCream,
-  FaWineGlass,
-  FaCookie,
-  FaUtensils,
-  FaQuestion,
-} from "react-icons/fa";
-
-const iconMap = {
-  FaCoffee,
-  FaMugHot,
-  FaGlassWhiskey,
-  FaCheese,
-  FaEgg,
-  FaBreadSlice,
-  FaAppleAlt,
-  FaLemon,
-  FaIceCream,
-  FaWineGlass,
-  FaCookie,
-  FaUtensils,
-};
-
-// import { FaCoffee, FaMugHot, FaGlassWhiskey, FaBreadSlice, FaCheese } from "react-icons/fa";
 
 
-// const iconMap = {
-//   cafe: <FaCoffee />,        // Icono de café
-//   te: <FaMugHot />,          // Icono de taza caliente (para té)
-//   leche: <FaGlassWhiskey />, // Usamos un vaso para representar leche (no hay icono específico leche)
-//   tostadas: <FaBreadSlice />,// Icono de pan (para tostadas)
-//   queso: <FaCheese />,       // Icono de queso
-// };
+import { foodIcons } from '../icons/foodIcons';
+
 
 const MenuTicketForm = ({ menuItems }) => {
   const [pin, setPin] = useState('');
@@ -143,7 +106,8 @@ const MenuTicketForm = ({ menuItems }) => {
                       console.log("Item icon_name:", item.icon_name, "Keys in iconMap:", Object.keys(iconMap));
 
                       console.log("Nombre:", item.name, "Ícono:", item.icon_name, "¿Existe?", iconMap[item.icon_name]);
-                      const Icon = iconMap[item.icon_name] || FaQuestion; 
+                      const Icon = foodIcons[item.icon_name] || foodIcons.FaQuestion;
+
                       const isSelected = selectedItems.includes(item.id);
 
                       return (

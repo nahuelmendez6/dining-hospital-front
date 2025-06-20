@@ -18,6 +18,7 @@ const ShiftsTable = () => {
     try {
       if (!token) return;
       const data = await getShifts(token);
+      console.log("Turnos recibidos desde API:", data);
       setShifts(data);
     } catch (error) {
       console.error('Error al obtener los turnos:', error);
@@ -48,10 +49,19 @@ const ShiftsTable = () => {
     }
   };
 
+  // const handleEdit = (shift) => {
+  //   setForm({ name: shift.name, start_time: shift.start_time, end_time: shift.end_time });
+  //   setEditingId(shift.id);
+  // };
   const handleEdit = (shift) => {
-    setForm({ name: shift.name, start_time: shift.start_time, end_time: shift.end_time });
+    setForm({
+      name: shift.name ?? '',
+      start_time: shift.start_time ?? '',
+      end_time: shift.end_time ?? '',
+    });
     setEditingId(shift.id);
   };
+  
 
   const handleDelete = async (id) => {
     if (!window.confirm('¿Estás seguro de que deseas eliminar este turno?')) return;

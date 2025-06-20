@@ -15,7 +15,7 @@ import TicketList from './components/TicketList';
 import Layout from './components/Layout';
 import TicketsTable from './components/tickets/TicketsTable';
 import DepartmentDashboard from './components/DepartmentDashboard';
-import MenuManager from './components/MenuManager';
+import MenuManager from './components/menu/MenuManager';
 import ShiftsTable from './components/ShiftsTable';
 import TicketChart from './components/TicketChart';
 

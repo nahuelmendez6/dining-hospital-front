@@ -10,11 +10,15 @@ import axios from 'axios';
 
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify';
+
+
 
 // Configurar interceptor global para agregar el token JWT a todas las peticiones
 axios.interceptors.request.use(
   config => {
-    const token = localStorage.getItem('access_token');
+    const token = localStorage.getItem('accessToken');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -28,6 +32,7 @@ root.render(
   <React.StrictMode>
     <AuthProvider>
       <App />
+      <ToastContainer position="top-right" autoClose={3000}/>
     </AuthProvider>
   </React.StrictMode>
 );

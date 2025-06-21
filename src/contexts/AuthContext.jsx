@@ -5,23 +5,20 @@ const AuthContext = createContext(null);
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(null);           // Perfil completo del usuario
+  const [userProfile, setUserProfile] = useState(null); // Mismo objeto perfil, redundante pero cómodo
   const [loading, setLoading] = useState(true);
-  const [groups, setGroups] = useState([]);
-  const [userProfile, setUserProfile] = useState(null);
   const [accessToken, setAccessToken] = useState(localStorage.getItem('accessToken'));
 
-  // URL base de la API de Django
   const API_URL = 'http://localhost:8000';
 
-  // Función para decodificar el token JWT
   const decodeToken = (token) => {
     try {
       const base64Url = token.split('.')[1];
       const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-      }).join(''));
+      const jsonPayload = decodeURIComponent(atob(base64).split('').map(c =>
+        '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+      ).join(''));
       return JSON.parse(jsonPayload);
     } catch (error) {
       console.error('Error decoding token:', error);
@@ -29,16 +26,12 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Función para cargar la información del usuario
   const loadUserData = async (token) => {
     try {
       console.log('Cargando datos del usuario...');
-      
-      // Intentar obtener la información del usuario del token primero
       const decodedToken = decodeToken(token);
-      console.log('Token válido, cargando datos del usuario');
+      if (!decodedToken) return false;
 
-      // Si no hay información en el token, intentar obtenerla del endpoint
       const response = await fetch(`${API_URL}/auth/user/`, {
         method: 'GET',
         headers: {
@@ -52,9 +45,6 @@ export const AuthProvider = ({ children }) => {
 
       if (response.ok) {
         const userData = await response.json();
-        console.log('Datos del usuario cargados correctamente');
-        
-        // Crear un objeto de perfil con la información necesaria
         const profile = {
           id: userData.id,
           username: userData.username,
@@ -64,11 +54,10 @@ export const AuthProvider = ({ children }) => {
           department_id: userData.department_id,
           groups: userData.groups || []
         };
-        console.log(profile)
-        
+        console.log('Perfil cargado:', profile);
+
+        setUser(profile);
         setUserProfile(profile);
-        setGroups(profile.groups);
-        
         return true;
       }
       return false;
@@ -78,16 +67,13 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Función para verificar si el token ha expirado
   const isTokenExpired = (token) => {
     const decoded = decodeToken(token);
     if (!decoded) return true;
-    
     const currentTime = Date.now() / 1000;
     return decoded.exp < currentTime;
   };
 
-  // Función para refrescar el token
   const refreshToken = async () => {
     const refreshToken = localStorage.getItem('refreshToken');
     if (!refreshToken) return false;
@@ -95,15 +81,14 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await fetch(`${API_URL}/auth/token/refresh/`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ refresh: refreshToken })
       });
 
       if (response.ok) {
         const data = await response.json();
         localStorage.setItem('accessToken', data.access);
+        setAccessToken(data.access);
         return true;
       }
       return false;
@@ -125,24 +110,22 @@ export const AuthProvider = ({ children }) => {
             setAccessToken(null);
             setUser(null);
             setUserProfile(null);
-            setGroups([]);
             setLoading(false);
             return;
           }
         }
-        
-        const success = await loadUserData(token);
-        if (success) {
-          setUser({ isAuthenticated: true });
-          setAccessToken(token);
-        } else {
+
+        const success = await loadUserData(localStorage.getItem('accessToken'));
+        if (!success) {
           localStorage.removeItem('accessToken');
           localStorage.removeItem('refreshToken');
           setAccessToken(null);
           setUser(null);
           setUserProfile(null);
-          setGroups([]);
         }
+      } else {
+        setUser(null);
+        setUserProfile(null);
       }
       setLoading(false);
     };
@@ -153,39 +136,27 @@ export const AuthProvider = ({ children }) => {
   const loginWithCredentials = async (username, password) => {
     try {
       console.log('Iniciando proceso de login...');
-      
       const response = await fetch(`${API_URL}/auth/login/`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify({ username, password })
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ username, password }),
       });
 
-     
-      
       console.log('Respuesta del servidor:', response.status);
-      
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        console.error('Error del servidor:', errorData);
         throw new Error(errorData.detail || 'Credenciales inválidas');
       }
 
       const data = await response.json();
-      console.log('Login exitoso, configurando sesión');
-
 
       if (data.access && data.refresh) {
         localStorage.setItem('accessToken', data.access);
         localStorage.setItem('refreshToken', data.refresh);
         setAccessToken(data.access);
-        
-        // Cargar la información del usuario después del login
+
         const success = await loadUserData(data.access);
         if (success) {
-          setUser({ isAuthenticated: true });
           return true;
         } else {
           throw new Error('Error al cargar la información del usuario');
@@ -195,9 +166,6 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (error) {
       console.error('Error en login:', error);
-      if (error.name === 'TypeError' && error.message.includes('NetworkError')) {
-        throw new Error('Error de conexión con el servidor. Por favor, verifica que el servidor esté en ejecución.');
-      }
       throw error;
     }
   };
@@ -205,36 +173,27 @@ export const AuthProvider = ({ children }) => {
   const loginWithPin = async (pin) => {
     try {
       console.log('Iniciando login con PIN...');
-      
       const response = await fetch(`${API_URL}/auth/login/`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify({ pin })
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ pin }),
       });
 
       console.log('Respuesta del servidor:', response.status);
-
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        console.error('Error del servidor:', errorData);
         throw new Error(errorData.detail || 'PIN inválido');
       }
 
       const data = await response.json();
-      console.log('Login exitoso, configurando sesión');
 
       if (data.access && data.refresh) {
         localStorage.setItem('accessToken', data.access);
         localStorage.setItem('refreshToken', data.refresh);
         setAccessToken(data.access);
-        
-        // Cargar la información del usuario después del login
+
         const success = await loadUserData(data.access);
         if (success) {
-          setUser({ isAuthenticated: true });
           return true;
         } else {
           throw new Error('Error al cargar la información del usuario');
@@ -244,9 +203,6 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (error) {
       console.error('Error en login con PIN:', error);
-      if (error.name === 'TypeError' && error.message.includes('NetworkError')) {
-        throw new Error('Error de conexión con el servidor. Por favor, verifica que el servidor esté en ejecución.');
-      }
       throw error;
     }
   };
@@ -257,29 +213,28 @@ export const AuthProvider = ({ children }) => {
     setAccessToken(null);
     setUser(null);
     setUserProfile(null);
-    setGroups([]);
   };
 
-  // Función para verificar si el usuario pertenece a un grupo específico
+  // Funciones para grupos
   const isInGroup = (groupName) => {
-    return groups.includes(groupName);
+    if (!userProfile || !userProfile.groups) return false;
+    return userProfile.groups.includes(groupName);
   };
 
-  // Función para verificar si el usuario pertenece a cualquiera de los grupos especificados
   const isInAnyGroup = (groupNames) => {
-    return groupNames.some(groupName => groups.includes(groupName));
+    if (!userProfile || !userProfile.groups) return false;
+    return groupNames.some(groupName => userProfile.groups.includes(groupName));
   };
 
-  // Función para verificar si el usuario pertenece a todos los grupos especificados
   const isInAllGroups = (groupNames) => {
-    return groupNames.every(groupName => groups.includes(groupName));
+    if (!userProfile || !userProfile.groups) return false;
+    return groupNames.every(groupName => userProfile.groups.includes(groupName));
   };
 
   const value = {
     user,
-    loading,
-    groups,
     userProfile,
+    loading,
     accessToken,
     loginWithCredentials,
     loginWithPin,

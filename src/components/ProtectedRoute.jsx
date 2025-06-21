@@ -5,26 +5,36 @@ import { useAuth } from '../contexts/AuthContext';
 const ProtectedRoute = ({ children, requiredGroups = [] }) => {
   const { user, userProfile, isInAnyGroup } = useAuth();
 
-  // Si no hay usuario autenticado, redirigir al login
+  // 1. Si no hay usuario autenticado o perfil, redirigir a login
   if (!user || !userProfile) {
     return <Navigate to="/login" replace />;
   }
 
-  // Si se requieren grupos específicos
+  // 2. Si la ruta requiere grupos específicos, validar pertenencia
   if (requiredGroups.length > 0) {
-    // Si el usuario no está en ninguno de los grupos requeridos
-    if (!isInAnyGroup(requiredGroups)) {
-      // Si el usuario está en el grupo 'hospital', redirigir a la página de tickets
+    const hasAccess = isInAnyGroup(requiredGroups);
+    
+    console.log("Usuario:", userProfile?.username);
+    console.log("Grupos del usuario:", userProfile?.groups);
+    console.log("Grupos requeridos:", requiredGroups);
+    console.log("¿Tiene acceso?:", hasAccess);
+
+    if (!hasAccess) {
+      // Si el usuario pertenece al grupo 'hospital', redirigir a tickets
       if (isInAnyGroup(['hospital'])) {
         return <Navigate to="/tickets" replace />;
       }
-      // Para otros usuarios, redirigir a una página de acceso denegado
+      // Si no, ruta no autorizada
       return <Navigate to="/unauthorized" replace />;
     }
+  } else {
+    // Si no se requiere ningún grupo, dejamos pasar el acceso
+    console.log("Usuario:", userProfile?.username);
+    console.log("Ruta sin restricción de grupo. Acceso permitido.");
   }
 
-  // Si el usuario está autenticado y tiene los permisos necesarios
+  // 3. Retornar el componente hijo si todo está OK
   return children;
 };
 
-export default ProtectedRoute; 
+export default ProtectedRoute;

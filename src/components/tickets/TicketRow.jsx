@@ -16,9 +16,9 @@ const getStatusClass = (status) => {
   const getStatusIcon = (status) => {
     switch (status.toLowerCase()) {
       case 'pending': return 'bi-hourglass-split';
-      case 'aprobado': return 'bi-check-circle-fill';
-      case 'rechazado': return 'bi-x-circle-fill';
-      case 'cancelado': return 'bi-slash-circle-fill';
+      case 'used': return 'bi-check-circle-fill';
+      // case 'rechazado': return 'bi-x-circle-fill';
+      // case 'cancelado': return 'bi-slash-circle-fill';
       default: return 'bi-question-circle-fill';
     }
   };

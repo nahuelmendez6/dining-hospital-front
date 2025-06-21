@@ -33,6 +33,8 @@ const Layout = ({ children }) => {
 
   const isAdmin = userProfile?.groups?.includes("admin");
   const isKitchen = userProfile?.groups?.includes("cocina");
+  const isAdminKitchen = userProfile?.groups?.includes("admin_cocina");
+  const isSupervisor = userProfile?.groups?.includes("supervisor");
   const renderMenuItems = () => {
     const menuItems = [];
 
@@ -69,12 +71,12 @@ const Layout = ({ children }) => {
         //     Gestión de Tickets
         //   </Link>
         // </li>,
-        <li key="menu" className={isActive('/menu') ? 'active' : ''}>
-          <Link to="/menu" className="d-flex align-items-center p-3 text-white">
-            <i className="bi bi-journal-text me-2"></i>
-            Menú
-          </Link>
-        </li>,
+        // <li key="menu" className={isActive('/menu') ? 'active' : ''}>
+        //   <Link to="/menu" className="d-flex align-items-center p-3 text-white">
+        //     <i className="bi bi-journal-text me-2"></i>
+        //     Menú
+        //   </Link>
+        // </li>,
         <li key="reports" className={isActive('/reports') ? 'active' : ''}>
           <Link to="/reports" className="d-flex align-items-center p-3 text-white">
             <i className="bi bi-bar-chart me-2"></i>
@@ -93,6 +95,35 @@ const Layout = ({ children }) => {
             Lista de Tickets
           </Link>
         </li>
+      );
+    }
+    if (isAdminKitchen) {
+      menuItems.push(
+        <li key="ticket-list" className={isActive('/ticket-list') ? 'active' : ''}>
+          <Link to="/ticket-list" className="d-flex align-items-center p-3 text-white">
+            <i className="bi bi-list-ul me-2"></i>
+            Lista de Tickets
+          </Link>
+        </li>
+      );
+      menuItems.push(
+        <li key="menu" className={isActive('/ticket-list') ? 'active' : ''}>
+          <Link to="/menu" className="d-flex align-items-center p-3 text-white">
+          <i className="bi bi-journal-text me-2"></i>
+            Menu
+          </Link>
+        </li>
+      );
+    }
+
+    if (isSupervisor) {
+      menuItems.push(
+        <li key="reports" className={isActive('/reports') ? 'active' : ''}>
+            <Link to="/reports" className="d-flex align-items-center p-3 text-white">
+              <i className="bi bi-bar-chart me-2"></i>
+              Reportes
+            </Link>
+          </li>
       );
     }
 

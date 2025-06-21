@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { getObservations } from "../../services/userService";
 import { useAuth } from "../../contexts/AuthContext";
+
+import { getGroups } from "../../services/groupService";
+
 import {
   FaLeaf, FaCandyCane, FaOilCan, FaBreadSlice, FaFish,
 } from "react-icons/fa";
@@ -31,6 +34,24 @@ const UserCreateModal = ({ isOpen, onClose, onSubmit }) => {
     group: '',
     observations: [],
   });
+
+
+  const [groupOptions, setGroupOptions] = useState([]);
+
+  useEffect(() => {
+    const fetchGroups = async () => {
+      try {
+        const data = await getGroups(token);
+        setGroupOptions(data);
+      } catch (error) {
+        console.error("Error al cargar grupos", error.response?.data || error.message);
+      }
+    };
+
+    if (isOpen) fetchGroups();
+  }, [isOpen, token]);
+
+
 
   const [observationOptions, setObservationOptions] = useState([]);
 
@@ -182,7 +203,7 @@ const UserCreateModal = ({ isOpen, onClose, onSubmit }) => {
                   </div>
                   <div className="col-md-6 mb-3">
                     <label className="form-label">Grupo</label>
-                    <select
+                    {/* <select
                       name="group"
                       value={formData.group}
                       onChange={handleChange}
@@ -193,6 +214,18 @@ const UserCreateModal = ({ isOpen, onClose, onSubmit }) => {
                       <option value="admin">Administrador</option>
                       <option value="hospital">Hospital</option>
                       <option value="cocina">Cocina</option>
+                    </select> */}
+                    <select
+                      name="group"
+                      value={formData.group}
+                      onChange={handleChange}
+                      className="form-select"
+                      required
+                    >
+                      <option value="">Seleccione un grupo...</option>
+                      {groupOptions.map(group => (
+                        <option key={group.id} value={group.name}>{group.name}</option>
+                      ))}
                     </select>
                   </div>
                 </div>

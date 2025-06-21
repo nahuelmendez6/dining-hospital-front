@@ -22,19 +22,25 @@ const TicketsTable = () => {
     };
 
     const getStatusClass = (status) => {
-        switch (status.toLowerCase()) {
+        const s = status.toLowerCase().trim();
+        console.log('Estado:', s);
+        switch (s.toLowerCase()) {
+            
             case 'pending':
                 return 'bg-success';
-            case 'aprobado':
-                return 'bg-primary'; // Puedes cambiar este color si deseas diferenciarlo más.
-            case 'rechazado':
-                return 'bg-danger';
-            case 'cancelado':
-                return 'bg-secondary';
+            case 'used':
+                return 'bg-warning text-dark'; // Estilo para 'used' con fondo amarillo y texto oscuro
+            // case 'rechazado':
+            //     return 'bg-danger';
+            // case 'cancelado':
+            //     return 'bg-secondary';
+            // default:
+            //     return 'bg-light text-dark';
             default:
                 return 'bg-light text-dark';
         }
     };
+    
     
     
 

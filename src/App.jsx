@@ -19,6 +19,8 @@ import MenuManager from './components/menu/MenuManager';
 import ShiftsTable from './components/ShiftsTable';
 import TicketChart from './components/TicketChart';
 
+import AuthTest from './components/test/AuthTest';
+
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
 
@@ -44,9 +46,30 @@ function App() {
           <Route
             path="/ticket-list"
             element={
-              <ProtectedRoute requiredGroups={['cocina']}>
+              <ProtectedRoute requiredGroups={['cocina', 'admin_cocina']}>
                 <Layout>
                   <TicketList />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          {/* Rutas para administradores de cocina */}
+          {/* <Route
+            path="/ticket-list"
+            element={
+              <ProtectedRoute requiredGroups={['admin_cocina']}>
+                <Layout>
+                  <TicketList />
+                </Layout>
+              </ProtectedRoute>
+            }
+          /> */}
+          <Route
+            path="/menu"
+            element={
+              <ProtectedRoute requiredGroups={['cocina', 'admin_cocina']}>
+                <Layout>
+                  <MenuManager />
                 </Layout>
               </ProtectedRoute>
             }
@@ -98,7 +121,7 @@ function App() {
             }
           />
 
-          <Route
+          {/* <Route
             path="/menu"
             element={
               <ProtectedRoute requiredGroups={['admin']}>
@@ -107,12 +130,12 @@ function App() {
                 </Layout>
               </ProtectedRoute>
             }
-          />
+          /> */}
 
           <Route
             path="/reports"
             element={
-              <ProtectedRoute requiredGroups={['admin']}>
+              <ProtectedRoute requiredGroups={['admin', 'supervisor']}>
                 <TicketChart/>
               </ProtectedRoute>
             }
@@ -133,6 +156,9 @@ function App() {
 
           {/* Ruta para manejar URLs no encontradas */}
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
+            
+          <Route path="/test-auth" element={<AuthTest />} />
+ 
         </Routes>
       </Router>
     </AuthProvider>

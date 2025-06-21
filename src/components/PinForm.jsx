@@ -141,7 +141,7 @@ const PinForm = () => {
 
               <div className="text-muted mt-3">
                 <i className="bi bi-info-circle me-2"></i>
-                Muestre este código al personal de cocina
+                Muestre este ticket al personal de cocina
               </div>
               <button
                 className="btn btn-outline-primary mt-4 w-100"

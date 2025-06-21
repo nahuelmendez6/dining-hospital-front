@@ -6,6 +6,22 @@ import { generateTicket } from '../services/ticketService';
 
 import { foodIcons } from '../icons/foodIcons';
 
+import * as FaIcons from "react-icons/fa";
+import * as GiIcons from "react-icons/gi";
+import * as MdIcons from "react-icons/md";
+
+const iconLibraries = {
+  Fa: FaIcons,
+  Gi: GiIcons,
+  Md: MdIcons,
+};
+
+function getIconComponent(iconName) {
+  if (!iconName || iconName.length < 2) return null;
+  const prefix = iconName.slice(0, 2); // Fa, Gi, Md
+  const lib = iconLibraries[prefix];
+  return lib ? lib[iconName] : null;
+}
 
 const MenuTicketForm = ({ menuItems }) => {
   const [pin, setPin] = useState('');
@@ -103,9 +119,9 @@ const MenuTicketForm = ({ menuItems }) => {
                   <label className="form-label d-block">Seleccione los ítems</label>
                   <div className="d-flex flex-wrap gap-3 justify-content-start">
                     {menuItems.map(item => {
-                      console.log("Item icon_name:", item.icon_name, "Keys in iconMap:", Object.keys(iconMap));
+                      console.log("Item icon_name:", item.icon_name, "Keys in foodIcons:", Object.keys(foodIcons));
 
-                      console.log("Nombre:", item.name, "Ícono:", item.icon_name, "¿Existe?", iconMap[item.icon_name]);
+                      console.log("Nombre:", item.name, "Ícono:", item.icon_name, "¿Existe?", foodIcons[item.icon_name]);
                       const Icon = foodIcons[item.icon_name] || foodIcons.FaQuestion;
 
                       const isSelected = selectedItems.includes(item.id);
@@ -149,9 +165,10 @@ const MenuTicketForm = ({ menuItems }) => {
               </form>
             </>
           ) : (
+            
             <div className="ticket-card text-center">
               <h3 className="mb-3">Ticket de Comedor</h3>
-
+              
               {/* QR opcional */}
               {/* <QRCodeSVG value={ticket.qr_data} size={200} /> */}
 
@@ -169,9 +186,48 @@ const MenuTicketForm = ({ menuItems }) => {
                 <p><strong>Hora:</strong> {formatTime(ticket.date)}</p>
               </div>
 
+              {ticket.items && ticket.items.length > 0 && (
+                <div className="mt-3">
+                  <h5 className="text-secondary">Ítems seleccionados:</h5>
+                  <ul className="list-group list-group-flush">
+                    {ticket.items.map((item, index) => (
+                      <li
+                        key={index}
+                        className="list-group-item d-flex justify-content-between align-items-center"
+                      >
+                        <span>{item.name}</span>
+                        <span className="badge bg-primary rounded-pill">
+                          {item.quantity}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {ticket.observations && ticket.observations.length > 0 && (
+                <div className="mt-3 text-start">
+                  <h6 className="text-secondary">Observaciones del Usuario:</h6>
+                  <div className="d-flex flex-wrap gap-2 mt-2">
+                    {ticket.observations.map((obs, index) => {
+                      const IconComponent = getIconComponent(obs.icon);
+                      return (
+                        <span
+                          key={index}
+                          className="badge rounded-pill bg-info-subtle text-info-emphasis d-flex align-items-center gap-2 px-3 py-2"
+                        >
+                          {IconComponent ? <IconComponent /> : <i className="bi bi-exclamation-triangle"></i>}
+                          {obs.name}
+                        </span>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
               <div className="text-muted mt-3">
                 <i className="bi bi-info-circle me-2"></i>
-                Muestre este código al personal de cocina
+                Muestre este ticket al personal de cocina
               </div>
 
               <button className="btn btn-outline-primary mt-4 w-100" onClick={() => setTicket(null)}>

@@ -7,7 +7,7 @@ import LoginPin from './pages/LoginPin';
 import Dashboard from './pages/Dashboard';
 import Users from './pages/Users';
 import Departments from './pages/Departments';
-import Reports from './pages/Reports';
+// import Reports from './pages/Reports';
 import TicketGenerator from './pages/TicketGenerator';
 import Unauthorized from './pages/Unauthorized';
 import TicketPage from './pages/TicketPage';
@@ -18,6 +18,8 @@ import DepartmentDashboard from './components/DepartmentDashboard';
 import MenuManager from './components/menu/MenuManager';
 import ShiftsTable from './components/ShiftsTable';
 import TicketChart from './components/TicketChart';
+
+import Reports from './pages/Reports';
 
 import AuthTest from './components/test/AuthTest';
 
@@ -136,7 +138,7 @@ function App() {
             path="/reports"
             element={
               <ProtectedRoute requiredGroups={['admin', 'supervisor']}>
-                <TicketChart/>
+                <Reports/>
               </ProtectedRoute>
             }
           />

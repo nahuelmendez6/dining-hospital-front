@@ -5,7 +5,7 @@ import {
 } from 'recharts';
 
 import TicketByShift from './TicketByShift';
-import TicketSummaryCards from './TicketSummaryCards';
+import TicketSummaryCards from './reports/TicketSummaryCards';
 import Layout from './Layout';
 import StockReport from './StockReport';
 import ItemShiftReport from './ItemShiftReport';

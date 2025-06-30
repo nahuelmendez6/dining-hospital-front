@@ -1,25 +1,24 @@
 import React, { useState } from 'react';
 import Layout from "../components/Layout";
 import UsersTable from "../components/users/UsersTable";
-import UserFormModal from '../components/users/UserFormModal'; // Usamos el modal unificado
-import UserStatsCards from '../components/users/UserStatsCards';
+import UserFormModal from "../components/users/UserFormModal";
+import UserStatsCards from "../components/users/UserStatsCards";
+import UserFilterBar from "../components/users/UserFilterBar";
+import UserToast from "../components/users/UserToast";
+
 import { deleteUser } from '../services/userService';
-
 import { useUsers } from '../hooks/useUsers';
-
 import { useAuth } from '../contexts/AuthContext';
 
-
 const Users = () => {
-
   const { accessToken } = useAuth();
-
-
-  const { users, loading, saveUser, setUsers } = useUsers(); 
+  const { users, loading, saveUser, setUsers } = useUsers();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  // `currentUser` será null para crear, o un objeto de usuario para editar
   const [currentUser, setCurrentUser] = useState(null);
+  const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
+  const [searchTerm, setSearchTerm] = useState('');
+  const [groupFilter, setGroupFilter] = useState('');
 
   const handleEditClick = (user) => {
     setCurrentUser(user);
@@ -27,70 +26,83 @@ const Users = () => {
   };
 
   const handleCreateClick = () => {
-    setCurrentUser(null); // Aseguramos que no hay datos iniciales
+    setCurrentUser(null);
     setIsModalOpen(true);
   };
 
   const handleDelete = async (user) => {
-    const confirm = window.confirm(`¿Seguro que deseas eliminar a ${user.first_name} ${user.last_name}?`);
-    if (!confirm) return;
-
+    if (!window.confirm(`¿Eliminar a ${user.first_name} ${user.last_name}?`)) return;
     try {
       await deleteUser(user.id, accessToken);
-      setUsers((prev) => prev.filter(u => u.id !== user.id));
-    } catch (error) {
-      console.error("Error al eliminar usuario", error);
-      alert("No se pudo eliminar el usuario.");
+      setUsers(prev => prev.filter(u => u.id !== user.id));
+      setToast({ show: true, message: 'Usuario eliminado', type: 'success' });
+    } catch (err) {
+      setToast({ show: true, message: 'Error al eliminar', type: 'danger' });
     }
-  }
+  };
 
   const handleSubmit = async (userData) => {
-    // `isEditing` se determina por la presencia de `currentUser`
     const isEditing = !!currentUser;
-    await saveUser(userData, isEditing, currentUser?.id);
-    closeModal();
+    try {
+      await saveUser(userData, isEditing, currentUser?.id);
+      closeModal();
+      setToast({
+        show: true,
+        message: isEditing ? 'Usuario actualizado' : 'Usuario creado',
+        type: 'success'
+      });
+    } catch (err) {
+      setToast({ show: true, message: 'Error al guardar', type: 'danger' });
+    }
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
-    setCurrentUser(null); // Limpiamos el usuario seleccionado al cerrar
+    setCurrentUser(null);
   };
 
   return (
     <Layout>
-      
-      <div className="container-fluid p-4">
-        <div className="d-flex justify-content-between align-items-center mb-4">
-          <h2><i className="bi bi-person-gear me-2"></i>Gestión de Usuarios</h2>
-          <button className="btn btn-primary btn-lg" onClick={handleCreateClick}>
-            <i className="bi bi-plus-circle me-2"></i>
-            Nuevo Usuario
+      <div className="container-fluid py-4 px-3 bg-light min-vh-100">
+        <div className="d-flex justify-content-between align-items-center mb-3">
+          <h2><i className="bi bi-person-gear me-2" />Gestión de Usuarios</h2>
+          <button className="btn btn-primary" onClick={handleCreateClick}>
+            <i className="bi bi-plus-circle me-1" />Nuevo Usuario
           </button>
         </div>
+
         <UserStatsCards />
-        <div className="card">
+
+        <div className="card shadow-sm mt-4">
           <div className="card-body">
-            <UsersTable 
-              users={users} 
-              loading={loading} 
-              onEdit={handleEditClick} 
-              onDelete={handleDelete}/>
+            <UserFilterBar
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+              groupFilter={groupFilter}
+              setGroupFilter={setGroupFilter}
+            />
+            <UsersTable
+              users={users}
+              loading={loading}
+              searchTerm={searchTerm}
+              groupFilter={groupFilter}
+              onEdit={handleEditClick}
+              onDelete={handleDelete}
+            />
           </div>
         </div>
 
-        {/* Renderizamos el modal solo cuando es necesario */}
         <UserFormModal
           isOpen={isModalOpen}
           onClose={closeModal}
           onSubmit={handleSubmit}
-          // Pasamos los datos del usuario a editar, o null si es para crear
           initialData={currentUser}
         />
+
+        <UserToast toast={toast} setToast={setToast} />
       </div>
-
     </Layout>
-  )
-
-}
+  );
+};
 
 export default Users;

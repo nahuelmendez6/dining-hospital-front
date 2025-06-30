@@ -7,7 +7,7 @@ const groupIcons = {
   Default: "bi-people"
 };
 
-const UsersTable = ({ users, loading, onEdit }) => {
+const UsersTable = ({ users, loading, onEdit, onDelete }) => {
   const [openGroups, setOpenGroups] = useState({});
 
   if (loading) {
@@ -74,7 +74,10 @@ const UsersTable = ({ users, loading, onEdit }) => {
                           <button className="btn btn-sm btn-outline-primary" onClick={() => onEdit(user)}>
                             <i className="bi bi-pencil"></i> Editar
                           </button>
-                          <button className="btn btn-sm btn-outline-danger">
+                          <button 
+                            className="btn btn-sm btn-outline-danger"
+                            onClick={() => onDelete(user)}
+                            >
                             <i className="bi bi-trash"></i> Eliminar
                           </button>
                         </div>

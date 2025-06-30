@@ -3,12 +3,19 @@ import Layout from "../components/Layout";
 import UsersTable from "../components/users/UsersTable";
 import UserFormModal from '../components/users/UserFormModal'; // Usamos el modal unificado
 import UserStatsCards from '../components/users/UserStatsCards';
+import { deleteUser } from '../services/userService';
 
 import { useUsers } from '../hooks/useUsers';
 
+import { useAuth } from '../contexts/AuthContext';
+
+
 const Users = () => {
 
-  const { users, loading, saveUser } = useUsers();
+  const { accessToken } = useAuth();
+
+
+  const { users, loading, saveUser, setUsers } = useUsers(); 
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   // `currentUser` será null para crear, o un objeto de usuario para editar
@@ -23,6 +30,19 @@ const Users = () => {
     setCurrentUser(null); // Aseguramos que no hay datos iniciales
     setIsModalOpen(true);
   };
+
+  const handleDelete = async (user) => {
+    const confirm = window.confirm(`¿Seguro que deseas eliminar a ${user.first_name} ${user.last_name}?`);
+    if (!confirm) return;
+
+    try {
+      await deleteUser(user.id, accessToken);
+      setUsers((prev) => prev.filter(u => u.id !== user.id));
+    } catch (error) {
+      console.error("Error al eliminar usuario", error);
+      alert("No se pudo eliminar el usuario.");
+    }
+  }
 
   const handleSubmit = async (userData) => {
     // `isEditing` se determina por la presencia de `currentUser`
@@ -50,7 +70,11 @@ const Users = () => {
         <UserStatsCards />
         <div className="card">
           <div className="card-body">
-            <UsersTable users={users} loading={loading} onEdit={handleEditClick} />
+            <UsersTable 
+              users={users} 
+              loading={loading} 
+              onEdit={handleEditClick} 
+              onDelete={handleDelete}/>
           </div>
         </div>
 

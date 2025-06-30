@@ -57,5 +57,6 @@ export const useUsers = () => {
         departments,
         loading,
         saveUser,
+        setUsers,
     };
 };

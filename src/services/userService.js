@@ -165,7 +165,7 @@ export const getUsers = async (token) => {
 export const updateUser = async (userId, userData, token) => {
     try {
         const requestData = {
-            first_name: userData.first_namename,
+            first_name: userData.first_name,
             last_name: userData.last_name,
             email: userData.email,
             // department_id: parseInt(userData.department),
@@ -181,6 +181,7 @@ export const updateUser = async (userId, userData, token) => {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             }
+
         });
 
         return response;
@@ -198,7 +199,7 @@ export const updateUser = async (userId, userData, token) => {
 export const deleteUser = async (userId, token) => {
     try {
         console.log(`Eliminando usuario ID ${userId}...`);
-        const response = await axios.delete(`${API_URL}auth/delete/user/${userId}/`, {
+        const response = await axios.delete(`${API_URL}auth/delete-user/${userId}/`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'

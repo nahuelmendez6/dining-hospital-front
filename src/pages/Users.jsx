@@ -1,61 +1,40 @@
 import React, { useState } from 'react';
 import Layout from "../components/Layout";
 import UsersTable from "../components/users/UsersTable";
-import UserCreateModal from '../components/users/UserCreateModal';
-import UserFormModal from '../components/users/UserFormModal';
+import UserFormModal from '../components/users/UserFormModal'; // Usamos el modal unificado
 import UserStatsCards from '../components/users/UserStatsCards';
 
 import { useUsers } from '../hooks/useUsers';
 
 const Users = () => {
 
-  const { users, departments, loading, saveUser} = useUsers();
+  const { users, loading, saveUser } = useUsers();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const [editing, setEditing] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
-
-  const [formData, setFormData] = useState({
-    first_name: '', last_name: '', email: '', dni: '', group: '', observations: []
-  });
-
-  const handleInputChange = e => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  }
+  // `currentUser` será null para crear, o un objeto de usuario para editar
+  const [currentUser, setCurrentUser] = useState(null);
 
   const handleEditClick = (user) => {
-    setFormData({
-      first_name: user.first_name,
-      last_name: user.last_name,
-      email: user.email,
-      dni: user.dni,
-      group: user.group || '',
-    });
-    setSelectedUser(user);
-    setEditing(true);
+    setCurrentUser(user);
     setIsModalOpen(true);
-  }
-
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   await saveUser(formData, editing, selectedUser?.id);
-  //   resetForm();
-  // };
-
-  const handleSubmit = async (userData) => {
-    await saveUser(userData, editing, selectedUser?.id);
-    resetForm();
   };
 
-  const resetForm = () => {
-    setFormData({ first_name: '', last_name: '', email: '', dni: '', group: '' });
-    setEditing(false);
-    setSelectedUser(null);
+  const handleCreateClick = () => {
+    setCurrentUser(null); // Aseguramos que no hay datos iniciales
+    setIsModalOpen(true);
+  };
+
+  const handleSubmit = async (userData) => {
+    // `isEditing` se determina por la presencia de `currentUser`
+    const isEditing = !!currentUser;
+    await saveUser(userData, isEditing, currentUser?.id);
+    closeModal();
+  };
+
+  const closeModal = () => {
     setIsModalOpen(false);
-    setShowCreateModal(false);
-  }
+    setCurrentUser(null); // Limpiamos el usuario seleccionado al cerrar
+  };
 
   return (
     <Layout>
@@ -63,7 +42,10 @@ const Users = () => {
       <div className="container-fluid p-4">
         <div className="d-flex justify-content-between align-items-center mb-4">
           <h2><i className="bi bi-person-gear me-2"></i>Gestión de Usuarios</h2>
-          <button className="btn btn-primary btn-lg" onClick={() => setShowCreateModal(true)}>Nuevo Usuario</button>
+          <button className="btn btn-primary btn-lg" onClick={handleCreateClick}>
+            <i className="bi bi-plus-circle me-2"></i>
+            Nuevo Usuario
+          </button>
         </div>
         <UserStatsCards />
         <div className="card">
@@ -72,25 +54,13 @@ const Users = () => {
           </div>
         </div>
 
-        
-
-
+        {/* Renderizamos el modal solo cuando es necesario */}
         <UserFormModal
           isOpen={isModalOpen}
-          closeModal={resetForm}
+          onClose={closeModal}
           onSubmit={handleSubmit}
-          formData={formData}
-          onChange={handleInputChange}
-          departments={departments}
-          editing={editing}
-        />
-
-        <UserCreateModal
-          isOpen={showCreateModal}
-          onClose={resetForm}
-          onSubmit={handleSubmit}
-          onChange={handleInputChange}
-          formData={formData}
+          // Pasamos los datos del usuario a editar, o null si es para crear
+          initialData={currentUser}
         />
       </div>
 

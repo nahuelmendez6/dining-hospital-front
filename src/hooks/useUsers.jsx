@@ -42,7 +42,7 @@ export const useUsers = () => {
         // esta funcion maneja la creacion o edicion de usuarios
 
         if (editing && userId) {
-            await updateUser(accessToken, userId, data);
+            await updateUser(userId, data, accessToken);
         } else {
             await createUser(data, accessToken);
         }

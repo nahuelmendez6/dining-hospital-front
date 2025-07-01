@@ -1,40 +1,64 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Layout from '../components/Layout';
+import { useAuth } from '../contexts/AuthContext';
+import { BiTime } from 'react-icons/bi';
+import ShiftForm from '../components/shifts/ShiftForm';
+import ShiftsTable from '../components/shifts/ShiftsTable';
+import ConfirmDeleteModal from '../components/shifts/ConfirmDeleteModal';
+import useShifts from '../hooks/useShift';
 
-const Shifts = () => {
+const ShiftsPage = () => {
+  const { accessToken: token } = useAuth();
+  const { shifts, loading, error, saveShift, removeShift } = useShifts(token);
+
+  const [editingShift, setEditingShift] = useState(null);
+  const [deleteModal, setDeleteModal] = useState({ show: false, id: null, loading: false });
+
+  const handleSubmit = async (formData) => {
+    const success = await saveShift(editingShift?.id, formData);
+    if (success) setEditingShift(null);
+  };
+
+  const handleDelete = async () => {
+    if (!deleteModal.id) return;
+    setDeleteModal((d) => ({ ...d, loading: true }));
+    const success = await removeShift(deleteModal.id);
+    if (success) setDeleteModal({ show: false, id: null, loading: false });
+    else setDeleteModal((d) => ({ ...d, loading: false }));
+  };
+
   return (
     <Layout>
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2>Gestión de Turnos</h2>
-        <button className="btn btn-primary">
-          <i className="bi bi-plus-lg"></i> Nuevo Turno
-        </button>
-      </div>
-      <div className="card">
-        <div className="card-body">
-          <div className="table-responsive">
-            <table className="table table-hover">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Nombre</th>
-                  <th>Hora Inicio</th>
-                  <th>Hora Fin</th>
-                  <th>Estado</th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td colSpan="6" className="text-center">No hay turnos registrados</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
+      <div className="container-fluid p-4">
+        <h2 className="mb-4 d-flex align-items-center gap-2">
+          <BiTime size={28} />
+          Gestión de Turnos
+        </h2>
+
+        <ShiftForm
+          onSubmit={handleSubmit}
+          onCancel={() => setEditingShift(null)}
+          initialData={editingShift}
+          loading={loading}
+        />
+
+        <ShiftsTable
+          shifts={shifts}
+          loading={loading}
+          error={error}
+          onEdit={setEditingShift}
+          onDelete={(id) => setDeleteModal({ show: true, id, loading: false })}
+        />
+
+        <ConfirmDeleteModal
+          show={deleteModal.show}
+          onHide={() => setDeleteModal({ show: false, id: null, loading: false })}
+          onConfirm={handleDelete}
+          loading={deleteModal.loading}
+        />
       </div>
     </Layout>
   );
 };
 
-export default Shifts; 
+export default ShiftsPage;

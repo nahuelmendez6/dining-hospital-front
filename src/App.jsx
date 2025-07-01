@@ -16,8 +16,9 @@ import Layout from './components/Layout';
 import TicketsTable from './components/tickets/TicketsTable';
 import DepartmentDashboard from './components/DepartmentDashboard';
 import MenuManager from './components/menu/MenuManager';
-import ShiftsTable from './components/ShiftsTable';
+// import ShiftsTable from './components/ShiftsTable';
 import TicketChart from './components/TicketChart';
+import ShiftsPage from './pages/Shifts';
 
 import Reports from './pages/Reports';
 
@@ -118,7 +119,7 @@ function App() {
             path="/shifts"
             element={
               <ProtectedRoute requiredGroups={['admin']}>
-                <ShiftsTable />
+                <ShiftsPage />
               </ProtectedRoute>
             }
           />

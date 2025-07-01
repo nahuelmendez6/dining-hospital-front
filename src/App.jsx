@@ -15,7 +15,8 @@ import TicketListPage from './pages/TicketListPage';
 import Layout from './components/Layout';
 import TicketsTable from './components/tickets/TicketsTable';
 import DepartmentDashboard from './components/DepartmentDashboard';
-import MenuManager from './components/menu/MenuManager';
+// import MenuManager from './components/menu/MenuManager';
+import MenuManagerPage from './pages/MenuManagerPage';
 import TicketChart from './components/TicketChart';
 import ShiftsPage from './pages/Shifts';
 
@@ -25,6 +26,8 @@ import AuthTest from './components/test/AuthTest';
 
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import './App.css'
 
@@ -55,23 +58,13 @@ function App() {
               </ProtectedRoute>
             }
           />
-          {/* Rutas para administradores de cocina */}
-          {/* <Route
-            path="/ticket-list"
-            element={
-              <ProtectedRoute requiredGroups={['admin_cocina']}>
-                <Layout>
-                  <TicketList />
-                </Layout>
-              </ProtectedRoute>
-            }
-          /> */}
+
           <Route
             path="/menu"
             element={
               <ProtectedRoute requiredGroups={['cocina', 'admin_cocina']}>
                 <Layout>
-                  <MenuManager />
+                  <MenuManagerPage />
                 </Layout>
               </ProtectedRoute>
             }
@@ -151,6 +144,7 @@ function App() {
           <Route path="/test-auth" element={<AuthTest />} />
  
         </Routes>
+        <ToastContainer position="top-right" autoClose={3000} />
       </Router>
     </AuthProvider>
   );

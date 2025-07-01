@@ -1,5 +1,11 @@
 import { useState, useEffect } from 'react'
 import { getShifts, createShift, editShift, deleteShift } from '../services/shiftService'
+import { toast } from "react-toastify";
+import {
+  updateShiftMenuItems,
+  toggleShiftMenuActive,
+} from "../services/menuService";
+
 
 const useShifts = (token) =>{
     const [shifts, setShifts] = useState([]);
@@ -19,6 +25,26 @@ const useShifts = (token) =>{
             setLoading(false);
         }
     };
+
+    const updateItems = async (shiftId, itemIds) => {
+      try {
+        await updateShiftMenuItems(shiftId, itemIds, token);
+        toast.success("Menú actualizado");
+        await fetchShifts();
+      } catch (error) {
+        toast.error("Error al asignar ítems");
+      }
+    };
+
+    const toggleActive = async (shiftId, currentValue) => {
+      try {
+        await toggleShiftMenuActive(shiftId, currentValue, token);
+        await fetchShifts();
+      } catch (error) {
+        toast.error("Error al cambiar el estado del menú");
+      }
+    };
+  
 
     useEffect(() => {
         fetchShifts();
@@ -46,7 +72,15 @@ const useShifts = (token) =>{
         }
       };
     
-      return { shifts, loading, error, saveShift, removeShift };
+      return { 
+        shifts, 
+        loading, 
+        error, 
+        saveShift, 
+        removeShift,
+        updateItems,
+        toggleActive, 
+      };
 };
 
 export default useShifts;

@@ -6,18 +6,12 @@ import Login from './pages/Login';
 import LoginPin from './pages/LoginPin';
 import Dashboard from './pages/Dashboard';
 import Users from './pages/Users';
-import Departments from './pages/Departments';
-import TicketGenerator from './pages/TicketGenerator';
 import Unauthorized from './pages/Unauthorized';
 import TicketPage from './pages/TicketPage';
-// import TicketList from './components/TicketList';
 import TicketListPage from './pages/TicketListPage';
 import Layout from './components/Layout';
-import TicketsTable from './components/tickets/TicketsTable';
-import DepartmentDashboard from './components/DepartmentDashboard';
-// import MenuManager from './components/menu/MenuManager';
+import TicketsPage from './pages/TicketsPage';
 import MenuManagerPage from './pages/MenuManagerPage';
-import TicketChart from './components/TicketChart';
 import ShiftsPage from './pages/Shifts';
 
 import Reports from './pages/Reports';
@@ -81,28 +75,10 @@ function App() {
           />
 
           <Route
-            path="/departments"
-            element={
-              <ProtectedRoute requiredGroups={['admin']}>
-                <DepartmentDashboard />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
             path="/tickets-table"
             element={
               <ProtectedRoute requiredGroups={['admin']}>
-                <TicketsTable />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/departments"
-            element={
-              <ProtectedRoute requiredGroups={['admin']}>
-                <Departments />
+                <TicketsPage />
               </ProtectedRoute>
             }
           />

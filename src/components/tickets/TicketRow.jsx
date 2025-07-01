@@ -26,7 +26,7 @@ const getStatusClass = (status) => {
   const TicketRow = ({ ticket }) => {
     return (
       <tr>
-        <td>{ticket.id}</td>
+        {/* <td>{ticket.id}</td> */}
         <td>{ticket.user}</td>
         <td>{new Date(ticket.date).toLocaleDateString()}</td>
         <td className="d-none d-md-table-cell">{ticket.shift}</td>

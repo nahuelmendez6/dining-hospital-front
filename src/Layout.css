@@ -2,7 +2,7 @@
 .wrapper {
     display: flex;
     height: 100vh;
-    overflow: hidden;
+    /* overflow: hidden; */
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   }
   
@@ -99,16 +99,45 @@
     background-color: #f8fafc;
     min-height: 100vh;
     overflow-y: auto;
+    position: relative;
   }
   
   #content.sidebar-collapsed {
     margin-left: 80px;
   }
+
+  #content.sidebar-collapsed .navbar {
+    left: 80px;
+    width: calc(100% - 80px);
+  }
   
+  #content .container-fluid {
+    margin-top: 40px; /* o lo que mida tu navbar */
+  }
+
   /* ========== Navbar ========== */
   .navbar {
+    position: fixed;
+    top: 0;
+    /* left: 250px; */
+    width: calc(100% - 250px);
+    z-index: 1020;
+    background-color: #ffffff;
     border-bottom: 1px solid #e5e7eb;
   }
+
+  .navbar.fixed-top {
+    left: 250px;
+    width: calc(100% - 250px);
+    transition: all 0.3s ease;
+    z-index: 1020;
+  }
+  
+  .navbar.fixed-top.collapsed-navbar {
+    left: 80px;
+    width: calc(100% - 80px);
+  }
+  
   
   .navbar .btn.toggle-btn {
     background-color: #1f2937;

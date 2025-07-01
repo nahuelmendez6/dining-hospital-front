@@ -118,7 +118,7 @@ const Layout = ({ children }) => {
       </nav>
 
       <div id="content" className={sidebarCollapsed ? 'sidebar-collapsed' : ''}>
-        <nav className="navbar navbar-expand-lg bg-white shadow-sm px-3">
+        <nav className={`navbar navbar-expand-lg bg-white shadow-sm px-3 fixed-top ${sidebarCollapsed ? 'collapsed-navbar' : ''}`}>
           <button
             type="button"
             className="btn toggle-btn"

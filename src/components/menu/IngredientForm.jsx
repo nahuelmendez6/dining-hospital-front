@@ -23,9 +23,13 @@ function IngredientForm({ token }) {
     cost: "",
     cost_type: "",
     description: "",
+    min_stock: 0,
   });
+
   const [error, setError] = useState(null);
   const [ingredients, setIngredients] = useState([]);
+
+  const isEditing = formData?.id != null;
 
   const fetchIngredients = async () => {
     try {
@@ -44,11 +48,25 @@ function IngredientForm({ token }) {
     fetchIngredients();
   }, []);
 
+  const resetForm = () => {
+    setFormData({
+      name: "",
+      quantity_in_stock: 0,
+      unit: "unit",
+      cost: "",
+      cost_type: "",
+      description: "",
+      min_stock: 0,
+    });
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: name === "cost" || name === "quantity_in_stock" || name === "min_stock"
+        ? parseFloat(value) || 0
+        : value,
     }));
   };
 
@@ -56,33 +74,36 @@ function IngredientForm({ token }) {
     e.preventDefault();
     setError(null);
 
-    try {
-      await axios.post(
-        "http://localhost:8000/core/ingredients/",
-        {
-          ...formData,
-          cost: formData.cost === "" ? null : parseFloat(formData.cost),
-          cost_type: formData.cost_type || null,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+    const payload = {
+      ...formData,
+      cost: formData.cost === "" ? null : parseFloat(formData.cost),
+      cost_type: formData.cost_type || null,
+    };
 
-      setFormData({
-        name: "",
-        quantity_in_stock: 0,
-        unit: "unit",
-        cost: "",
-        cost_type: "",
-        description: "",
-      });
+    try {
+      if (isEditing) {
+        await axios.patch(
+          `http://localhost:8000/core/ingredients/${formData.id}/`,
+          payload,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+      } else {
+        await axios.post(
+          "http://localhost:8000/core/ingredients/",
+          payload,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+      }
+
+      resetForm();
       fetchIngredients();
     } catch (err) {
       console.error(err);
-      setError("Error al crear ingrediente. Verifica los datos ingresados.");
+      setError("Error al guardar ingrediente. Verifica los datos ingresados.");
     }
   };
 
@@ -91,9 +112,7 @@ function IngredientForm({ token }) {
 
     try {
       await axios.delete(`http://localhost:8000/core/ingredients/${id}/`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
       fetchIngredients();
     } catch (err) {
@@ -102,9 +121,18 @@ function IngredientForm({ token }) {
     }
   };
 
+  const handleEdit = (ing) => {
+    setFormData({
+      ...ing,
+      cost: ing.cost ?? "",
+      cost_type: ing.cost_type ?? "",
+      min_stock: ing.min_stock ?? 0,
+    });
+  };
+
   return (
     <div className="mb-5">
-      <h4>Nuevo Ingrediente</h4>
+      <h4>{isEditing ? "Editar Ingrediente" : "Nuevo Ingrediente"}</h4>
       {error && <Alert variant="danger">{error}</Alert>}
 
       <Form onSubmit={handleSubmit}>
@@ -129,6 +157,17 @@ function IngredientForm({ token }) {
               value={formData.quantity_in_stock}
               onChange={handleChange}
               required
+            />
+          </Col>
+
+          <Col md={2}>
+            <Form.Label>Stock mínimo</Form.Label>
+            <Form.Control
+              type="number"
+              name="min_stock"
+              step="0.01"
+              value={formData.min_stock}
+              onChange={handleChange}
             />
           </Col>
 
@@ -172,9 +211,17 @@ function IngredientForm({ token }) {
 
           <Col md={1}>
             <Button type="submit" variant="primary" className="w-100">
-              +
+              {isEditing ? "✔" : "+"}
             </Button>
           </Col>
+
+          {isEditing && (
+            <Col md={1}>
+              <Button variant="secondary" className="w-100" onClick={resetForm}>
+                ✕
+              </Button>
+            </Col>
+          )}
         </Row>
 
         <Row className="mt-3">
@@ -192,7 +239,6 @@ function IngredientForm({ token }) {
         </Row>
       </Form>
 
-      {/* Tabla de ingredientes */}
       <hr />
       <h5 className="mt-4">Ingredientes cargados</h5>
       <Table striped bordered hover responsive size="sm">
@@ -200,6 +246,7 @@ function IngredientForm({ token }) {
           <tr>
             <th>Nombre</th>
             <th>Stock</th>
+            <th>Stock mínimo</th>
             <th>Unidad</th>
             <th>Costo</th>
             <th>Tipo Costo</th>
@@ -212,10 +259,19 @@ function IngredientForm({ token }) {
               <tr key={ing.id}>
                 <td>{ing.name}</td>
                 <td>{ing.quantity_in_stock}</td>
+                <td>{ing.min_stock}</td>
                 <td>{ing.unit}</td>
                 <td>{ing.cost || "-"}</td>
                 <td>{ing.cost_type || "-"}</td>
                 <td>
+                  <Button
+                    size="sm"
+                    variant="warning"
+                    className="me-1"
+                    onClick={() => handleEdit(ing)}
+                  >
+                    Editar
+                  </Button>
                   <Button
                     size="sm"
                     variant="danger"

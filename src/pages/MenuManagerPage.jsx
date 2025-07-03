@@ -6,6 +6,7 @@ import Accordion from "react-bootstrap/Accordion";
 
 import MenuItemForm from "../components/menu/MenuItemForm";
 import MenuList from "../components/menu/MenuList";
+import MenuFlatList from "../components/menu/MenuFlatList.jsx";
 import ItemAssignSelect from "../components/menu/ItemAssignSelect";
 import IngredientForm from "../components/menu/IngredientForm";
 
@@ -49,7 +50,7 @@ function MenuManagerPage() {
         {/* TAB 1: Ítems */}
         <Tab eventKey="items" title="Gestión de Ítems">
         <Button variant="success" onClick={() => setShowItemModal(true)}>Nuevo Ítem</Button>
-        <Button variant="success" onClick={() => setShowIngredientModal(true)}>Nuevo Ingrediente</Button>
+        {/* <Button variant="success" onClick={() => setShowIngredientModal(true)}>Nuevo Ingrediente</Button> */}
 
           {/* <MenuItemForm
             initialItem={editingItem}
@@ -104,7 +105,7 @@ function MenuManagerPage() {
                   <div className="row mt-4">
                     <div className="col-md-6">
                       <h5>Ítems asignados</h5>
-                      <MenuList
+                      <MenuFlatList 
                         items={items.filter((item) =>
                           (shift.menu_items || []).includes(item.id)
                         )}
@@ -115,7 +116,20 @@ function MenuManagerPage() {
                           );
                           updateItems(shift.id, updated);
                         }}
+                      
                       />
+                      {/* <MenuList
+                        items={items.filter((item) =>
+                          (shift.menu_items || []).includes(item.id)
+                        )}
+                        onEdit={setEditingItem}
+                        onRemove={(itemIdToRemove) => {
+                          const updated = (shift.menu_items || []).filter(
+                            (id) => id !== itemIdToRemove
+                          );
+                          updateItems(shift.id, updated);
+                        }}
+                      /> */}
                     </div>
                     <div className="col-md-6">
                       <h5>Asignar ítems disponibles</h5>

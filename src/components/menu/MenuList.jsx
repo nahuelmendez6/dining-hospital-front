@@ -77,6 +77,7 @@ function MenuList({ items, onEdit, onRemove, onDelete }) {
                   <th>Nombre</th>
                   <th>Ícono</th>
                   <th>Stock</th>
+                  <th>Stock mínimo</th>
                   <th className="text-end">Acciones</th>
                 </tr>
               </thead>
@@ -88,6 +89,7 @@ function MenuList({ items, onEdit, onRemove, onDelete }) {
                       <td>{item.name}</td>
                       <td><Icon /></td>
                       <td>{item.stock}</td>
+                      <td>{item.min_stock}</td>
                       <td className="text-end">
                         {onEdit && (
                           <button

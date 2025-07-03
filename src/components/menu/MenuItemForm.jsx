@@ -13,6 +13,7 @@ function MenuItemForm({ initialItem, onSubmit, onCancel, compact = false }) {
   const [name, setName] = useState("");
   const [iconName, setIconName] = useState("FaCoffee");
   const [stock, setStock] = useState(0);
+  const [min_stock, setmin_stock] = useState(0);
   const [cost, setCost] = useState(0);
   const [category, setCategory] = useState("drink_hot");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -40,12 +41,14 @@ function MenuItemForm({ initialItem, onSubmit, onCancel, compact = false }) {
       setName(initialItem.name || "");
       setIconName(initialItem.icon_name || "FaCoffee");
       setStock(initialItem.stock || 0);
+      setmin_stock(initialItem.min_stock || 0);
       setCategory(initialItem.category || "drink_hot");
       setCost(initialItem.cost || 0);
     } else {
       setName("");
       setIconName("FaCoffee");
       setStock(0);
+      setmin_stock(0);
       setCategory("drink_hot");
       setCost(0);
     }
@@ -55,7 +58,13 @@ function MenuItemForm({ initialItem, onSubmit, onCancel, compact = false }) {
     e.preventDefault();
     setIsSubmitting(true);
 
-    const data = { name, icon_name: iconName, stock: stock || 0, category, cost: parseFloat(cost) || 0 };
+    const data = { 
+      name, 
+      icon_name: iconName, 
+      stock: stock || 0, 
+      min_stock: min_stock || 0, 
+      category, 
+      cost: parseFloat(cost) || 0 };
     console.log("Token actual:", accessToken);
 
     try {
@@ -63,7 +72,7 @@ function MenuItemForm({ initialItem, onSubmit, onCancel, compact = false }) {
         await updateMenuItem(initialItem.id, data, accessToken);
         toast.success("Ítem actualizado correctamente");
       } else {
-        await createMenuItem(data, token);
+        await createMenuItem(data, accessToken);
         toast.success("Ítem creado correctamente");
       }
       onSubmit?.();
@@ -124,6 +133,20 @@ function MenuItemForm({ initialItem, onSubmit, onCancel, compact = false }) {
         className="form-control form-control-sm text-center"
         value={stock}
         onChange={(e) => setStock(Math.max(0, parseInt(e.target.value) || 0))}
+        required
+      />
+    </div>
+
+    {/* Stock mínimo*/}
+    <div className="col-md-2">
+      <label htmlFor="minStockInput" className="form-label mb-1 fw-semibold">Stock mínimo</label>
+      <input
+        id="minStockInput"
+        type="number"
+        min="0"
+        className="form-control form-control-sm text-center"
+        value={min_stock}
+        onChange={(e) => setmin_stock(Math.max(0, parseInt(e.target.value) || 0))}
         required
       />
     </div>

@@ -1,16 +1,20 @@
-// src/pages/MenuPage.jsx
 import { useState, useEffect } from "react";
 import Tabs from "react-bootstrap/Tabs";
 import Tab from "react-bootstrap/Tab";
+import { Button } from "react-bootstrap";
 import Accordion from "react-bootstrap/Accordion";
 
 import MenuItemForm from "../components/menu/MenuItemForm";
 import MenuList from "../components/menu/MenuList";
 import ItemAssignSelect from "../components/menu/ItemAssignSelect";
+import IngredientForm from "../components/menu/IngredientForm";
 
 import { useAuth } from "../contexts/AuthContext";
 import { useMenuItems } from "../hooks/useMenuItems";
 import useShifts from "../hooks/useShift.js";
+
+import MenuItemModal from "../components/menu/MenuItemModal";
+import IngredientModal from "../components/menu/IngredientModal";
 
 function MenuManagerPage() {
   const [editingItem, setEditingItem] = useState(null);
@@ -21,6 +25,10 @@ function MenuManagerPage() {
   const { shifts, updateItems, toggleActive } = useShifts(token);
 
   const activeShifts = shifts.filter((s) => s.menu_active);
+
+  const [showItemModal, setShowItemModal] = useState(false);
+  const [showIngredientModal, setShowIngredientModal] = useState(false);
+
 
   useEffect(() => {
     if (activeShifts.length > 0 && !selectedShiftId) {
@@ -40,15 +48,21 @@ function MenuManagerPage() {
       <Tabs defaultActiveKey="items" className="mb-4">
         {/* TAB 1: Ítems */}
         <Tab eventKey="items" title="Gestión de Ítems">
-          <MenuItemForm
+        <Button variant="success" onClick={() => setShowItemModal(true)}>Nuevo Ítem</Button>
+        <Button variant="success" onClick={() => setShowIngredientModal(true)}>Nuevo Ingrediente</Button>
+
+          {/* <MenuItemForm
             initialItem={editingItem}
             onSubmit={handleItemCreated}
             onCancel={() => setEditingItem(null)}
-          />
+          /> */}
           <hr />
           <MenuList
             items={items}
-            onEdit={setEditingItem}
+            onEdit={(item) => {
+              setEditingItem(item);
+              setShowItemModal(true);
+            }}
             onDelete={removeItem}
           />
         </Tab>
@@ -119,7 +133,26 @@ function MenuManagerPage() {
             <p>No hay turnos con menú habilitado.</p>
           )}
         </Tab>
+
+        {/* TAB 3: Ingredientes */}
+        <Tab eventKey="ingredientes" title="Gestión de Ingredientes">
+          <IngredientForm token={token} />
+        </Tab>
       </Tabs>
+
+      <MenuItemModal
+          show={showItemModal}
+          onHide={() => setShowItemModal(false)}
+          initialItem={editingItem}
+          onSubmit={handleItemCreated}
+        />
+
+        <IngredientModal
+          show={showIngredientModal}
+          onHide={() => setShowIngredientModal(false)}
+          token={token}
+        />
+
     </div>
   );
 }

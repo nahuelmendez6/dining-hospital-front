@@ -1,0 +1,26 @@
+.category-sidebar {
+    background-color: #1f2937;
+    border-radius: 0.5rem;
+    padding: 0.5rem 0;
+  }
+  
+  .category-sidebar a.list-group-item {
+    background-color: transparent;
+    color: white !important;
+    border: none;
+    transition: background-color 0.3s ease;
+  }
+  
+  .category-sidebar a.list-group-item:hover,
+  .category-sidebar a.list-group-item:focus {
+    background-color: #374151 !important;
+    color: white !important;
+  }
+  
+  /* Ajuste sticky-top para no tapar navbar */
+  .category-sidebar.sticky-top {
+    position: sticky !important;
+    top: 56px; /* altura navbar fija */
+    z-index: 1020;
+  }
+  

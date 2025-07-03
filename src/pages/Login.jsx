@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
-import logo from '../assets/logo.jpg'; 
+import logo from '../assets/logo.png'; 
 
 const Login = () => {
   const [username, setUsername] = useState('');

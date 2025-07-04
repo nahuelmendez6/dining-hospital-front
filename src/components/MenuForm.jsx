@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { generateTicket } from '../services/ticketService';
 
+import '../MenuTicketForm.css';
 
 
 import { foodIcons } from '../icons/foodIcons';
@@ -91,154 +92,120 @@ const MenuTicketForm = ({ menuItems }) => {
   };
 
   return (
-    <div className="container d-flex align-items-center justify-content-center min-vh-100">
-      <div className="col-12 col-sm-10 col-md-6 col-lg-5">
-        <div className="card shadow-lg border-0 rounded-4 p-4">
-          {!ticket ? (
-            <>
-              <h2 className="text-center mb-4">Generar ticket</h2>
-              {error && <div className="alert alert-danger">{error}</div>}
+    <div className="container d-flex align-items-center justify-content-center min-vh-100 px-3">
+  <div className="w-100" style={{ maxWidth: 480 }}>
+    <div className="card shadow border-0 rounded-4 p-4 bg-white">
+      {!ticket ? (
+        <>
+          <h2 className="text-center fw-bold mb-4">🎟️ Generar Ticket</h2>
+          {/* <h3 className="text-center fw-bold mb-4">{shift}</h3> */}
+          {error && <div className="alert alert-danger text-center">{error}</div>}
 
-              <form onSubmit={handleSubmit}>
-                <div className="mb-3">
-                  <label htmlFor="pin" className="form-label">PIN</label>
-                  <input
-                    type="text"
-                    id="pin"
-                    className="form-control text-center fs-4"
-                    value={pin}
-                    onChange={handlePinChange}
-                    inputMode="numeric"
-                    maxLength="6"
-                    required
-                    style={{ letterSpacing: '0.5em' }}
-                  />
-                </div>
+          <form onSubmit={handleSubmit} className="d-grid gap-4">
+            <div>
+              <label htmlFor="pin" className="form-label fw-semibold">PIN</label>
+              <input
+                type="text"
+                id="pin"
+                className="form-control form-control-lg text-center"
+                value={pin}
+                onChange={handlePinChange}
+                inputMode="numeric"
+                maxLength="6"
+                required
+                placeholder="••••"
+                style={{
+                  letterSpacing: '0.5em',
+                  fontSize: '1.5rem',
+                  borderRadius: '0.75rem'
+                }}
+              />
+            </div>
 
-                <div className="mb-4">
-                  <label className="form-label d-block">Seleccione los ítems</label>
-                  <div className="d-flex flex-wrap gap-3 justify-content-start">
-                    {menuItems.map(item => {
-                      console.log("Item icon_name:", item.icon_name, "Keys in foodIcons:", Object.keys(foodIcons));
+            <div>
+              <label className="form-label fw-semibold">Selecciona tus ítems</label>
+              <div className="d-flex flex-wrap gap-3 justify-content-start">
+                {menuItems.map(item => {
+                  const Icon = foodIcons[item.icon_name] || foodIcons.FaQuestion;
+                  const isSelected = selectedItems.includes(item.id);
 
-                      console.log("Nombre:", item.name, "Ícono:", item.icon_name, "¿Existe?", foodIcons[item.icon_name]);
-                      const Icon = foodIcons[item.icon_name] || foodIcons.FaQuestion;
-
-                      const isSelected = selectedItems.includes(item.id);
-
-                      return (
-                        <div
-                          key={item.id}
-                          onClick={() => handleItemChange(item.id)}
-                          className={`border rounded-3 text-center p-3 cursor-pointer ${
-                            isSelected ? 'bg-primary text-white' : 'bg-light'
-                          }`}
-                          style={{
-                            width: 90,
-                            height: 90,
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            transition: '0.3s',
-                          }}
-                        >
-                          <div style={{ fontSize: 24 }}><Icon /></div>
-                          <small>{item.name}</small>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
-
-                <button type="submit" className="btn btn-primary w-100" disabled={loading}>
-                  {loading ? (
-                    <>
-                      <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                      Generando ticket...
-                    </>
-                  ) : (
-                    'Generar Ticket'
-                  )}
-                </button>
-              </form>
-            </>
-          ) : (
-            
-            <div className="ticket-card text-center">
-              <h3 className="mb-3">Ticket de Comedor</h3>
-              
-              {/* QR opcional */}
-              {/* <QRCodeSVG value={ticket.qr_data} size={200} /> */}
-
-              <div className="ticket-card text-center mt-4 p-3 rounded-4 bg-warning-subtle border border-warning shadow-sm">
-                <h5 className="mb-2 text-warning-emphasis">Tu frase clave es</h5>
-                <h2 className="fw-bold">{ticket.words}</h2>
+                  return (
+                    <div
+                      key={item.id}
+                      onClick={() => handleItemChange(item.id)}
+                      className={`selectable-item shadow-sm ${isSelected ? 'active' : ''}`}
+                    >
+                      <div className="icon"><Icon /></div>
+                      <small className="text-center">{item.name}</small>
+                    </div>
+                  );
+                })}
               </div>
+            </div>
 
-              {getStatusBadge(ticket.status)}
-
-              <div className="text-start mt-4">
-                <p><strong>Nombre:</strong> {ticket.user}</p>
-                <p><strong>Turno:</strong> {ticket.shift}</p>
-                <p><strong>Fecha:</strong> {new Date(ticket.date).toLocaleDateString()}</p>
-                <p><strong>Hora:</strong> {formatTime(ticket.date)}</p>
-              </div>
-
-              {ticket.items && ticket.items.length > 0 && (
-                <div className="mt-3">
-                  <h5 className="text-secondary">Ítems seleccionados:</h5>
-                  <ul className="list-group list-group-flush">
-                    {ticket.items.map((item, index) => (
-                      <li
-                        key={index}
-                        className="list-group-item d-flex justify-content-between align-items-center"
-                      >
-                        <span>{item.name}</span>
-                        <span className="badge bg-primary rounded-pill">
-                          {item.quantity}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+            <button
+              type="submit"
+              className="btn btn-primary btn-lg rounded-pill fw-semibold"
+              disabled={loading}
+            >
+              {loading ? (
+                <>
+                  <span className="spinner-border spinner-border-sm me-2" role="status" />
+                  Generando...
+                </>
+              ) : (
+                'Generar Ticket'
               )}
+            </button>
+          </form>
+        </>
+      ) : (
+        <div className="ticket-success text-center">
+          <h3 className="fw-bold mb-3">🎉 Ticket Generado</h3>
 
-              {ticket.observations && ticket.observations.length > 0 && (
-                <div className="mt-3 text-start">
-                  <h6 className="text-secondary">Observaciones del Usuario:</h6>
-                  <div className="d-flex flex-wrap gap-2 mt-2">
-                    {ticket.observations.map((obs, index) => {
-                      const IconComponent = getIconComponent(obs.icon);
-                      return (
-                        <span
-                          key={index}
-                          className="badge rounded-pill bg-info-subtle text-info-emphasis d-flex align-items-center gap-2 px-3 py-2"
-                        >
-                          {IconComponent ? <IconComponent /> : <i className="bi bi-exclamation-triangle"></i>}
-                          {obs.name}
-                        </span>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
+          <div className="bg-warning-subtle p-3 rounded-4 border border-warning mb-3">
+            <h6 className="text-warning-emphasis">Tu frase clave es:</h6>
+            <h2 className="fw-bold">{ticket.words}</h2>
+          </div>
 
-              <div className="text-muted mt-3">
-                <i className="bi bi-info-circle me-2"></i>
-                Muestre este ticket al personal de cocina
-              </div>
+          {getStatusBadge(ticket.status)}
 
-              <button className="btn btn-outline-primary mt-4 w-100" onClick={() => setTicket(null)}>
-                <i className="bi bi-plus-circle me-2"></i>
-                Generar Nuevo Ticket
-              </button>
+          <div className="text-start mt-3 small">
+            <p><strong>👤 Nombre:</strong> {ticket.user}</p>
+            <p><strong>🕑 Turno:</strong> {ticket.shift}</p>
+            <p><strong>📅 Fecha:</strong> {new Date(ticket.date).toLocaleDateString()}</p>
+            <p><strong>⏰ Hora:</strong> {formatTime(ticket.date)}</p>
+          </div>
+
+          {ticket.items && ticket.items.length > 0 && (
+            <div className="mt-3 text-start">
+              <h6 className="text-secondary">🧾 Ítems seleccionados:</h6>
+              <ul className="list-group list-group-flush">
+                {ticket.items.map((item, index) => (
+                  <li
+                    key={index}
+                    className="list-group-item d-flex justify-content-between align-items-center"
+                  >
+                    <span>{item.name}</span>
+                    <span className="badge bg-primary rounded-pill">
+                      {item.quantity}
+                    </span>
+                  </li>
+                ))}
+              </ul>
             </div>
           )}
+
+          <button className="btn btn-outline-primary mt-4 w-100" onClick={() => setTicket(null)}>
+            <i className="bi bi-plus-circle me-2"></i>
+            Generar Nuevo Ticket
+          </button>
         </div>
-      </div>
+      )}
     </div>
+  </div>
+</div>
+
   );
 };
 

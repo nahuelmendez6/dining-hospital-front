@@ -9,6 +9,64 @@ const Layout = ({ children }) => {
   const { userProfile, logout } = useAuth();
   const location = useLocation();
 
+  const [notifications, setNotificactions] = useState([]);
+  const [showNotifDropdown, setShowNotifDropdown] = useState(false);
+
+  const {accessToken} = useAuth(); 
+
+  // const token = localStorage.getItem("token"); 
+  useEffect(() => {
+    
+    const fetchNotifications = async () => {
+        try {
+        //   const token = localStorage.getItem("token"); // ✅ leer siempre el valor actual
+        // if (!token) {
+        //   console.warn("Token no disponible para notificaciones");
+        //   return;
+        // }
+        const response = await fetch("http://localhost:8000/core/stock-notifications/", {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+  
+        if (response.ok) {
+          const data = await response.json();
+          setNotificactions(data);
+        }
+      } catch (error) {
+        console.error("Error al obtener notificaciones:", error);
+      }
+    };
+  
+    fetchNotifications();
+  
+    const interval = setInterval(fetchNotifications, 60000); // cada 60 segundos
+    return () => clearInterval(interval);
+  }, []);
+  
+  const handleResolveNotification = async (notifId) => {
+    try {
+      // const token = localStorage.getItem("token");
+      const response = await fetch(`http://localhost:8000/core/stock-notifications/${notifId}/resolve/`, {
+        method: 'PATCH',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      if (response.ok) {
+        setNotificactions((prev) => prev.filter((n) => n.id !== notifId));
+      } else {
+        console.error("Error al resolver notificación");
+      }
+    } catch (err) {
+      console.error("Error:", err);
+    }
+  };
+  
+
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth <= 768) {
@@ -127,6 +185,49 @@ const Layout = ({ children }) => {
             <i className="bi bi-list"></i>
           </button>
           <div className="ms-auto d-flex align-items-center">
+
+
+          <div className="position-relative me-3">
+            <button
+              className="btn btn-link position-relative"
+              onClick={() => setShowNotifDropdown(!showNotifDropdown)}
+            >
+              <i className="bi bi-bell fs-5 text-dark"></i>
+              {notifications.length > 0 && (
+                <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                  {notifications.length}
+                </span>
+              )}
+            </button>
+
+            {showNotifDropdown && (
+              <div className="dropdown-menu dropdown-menu-end show p-2 shadow" style={{ minWidth: '300px', right: 0 }}>
+                <h6 className="dropdown-header">Notificaciones</h6>
+                {notifications.length === 0 ? (
+                  <span className="dropdown-item-text text-muted">Sin notificaciones</span>
+                ) : (
+                  notifications.map((notif) => (
+                    <div key={notif.id} className="dropdown-item-text small d-flex justify-content-between align-items-start">
+                      <div style={{ maxWidth: '220px' }}>
+                        <i className="bi bi-exclamation-circle-fill text-warning me-2"></i>
+                        {notif.message}
+                      </div>
+                      <button
+                        className="btn btn-sm btn-outline-success ms-2 py-0 px-1"
+                        title="Marcar como leído"
+                        onClick={() => handleResolveNotification(notif.id)}
+                      >
+                        <i className="bi bi-check2"></i>
+                      </button>
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
+          </div>
+
+
+
             <span className="me-3 text-dark">
               <i className="bi bi-person-circle me-2"></i>
               {userProfile?.first_name && userProfile?.last_name

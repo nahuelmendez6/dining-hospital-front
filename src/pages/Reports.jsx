@@ -13,6 +13,12 @@ import StockDepletionForecastReport from '../components/reports/StockDepletionFo
 import StockDepletionForecastChart from '../components/reports/StockDepletionForecastChart';
 import UserConsumptionReport from '../components/reports/UserConsumptionReport';
 import UserConsumptionReportChart from '../components/reports/UserConsumptionReportChart';
+import StockMovementReport from '../components/reports/StockMovementReport';
+import MenuCostProjectionReport from '../components/reports/MenuCostProjectionReport';
+import MenuSimpleCostReport from '../components/reports/MenuSimpleCostReport';
+import MenuCostByConsumptionReport from '../components/reports/MenuCostByConsumptionReport';
+import MenuCostByIngredientReport from '../components/reports/TotalIngredientConsumptionReport';
+import TotalIngredientConsumptionReport from '../components/reports/TotalIngredientConsumptionReport';
 
 const Reports = () => {
   const [activeTab, setActiveTab] = useState('tickets');
@@ -79,9 +85,21 @@ const Reports = () => {
             <StockDepletionForecastReport startDate={startDate} endDate={endDate} status={status} />
 
             <StockDepletionForecastChart startDate={startDate} endDate={endDate} status={status} />
+          
+            <StockMovementReport />
           </>
         )
       
+      case 'costos':
+        return (
+          <>
+            <TotalIngredientConsumptionReport />
+            {/* <MenuCostProjectionReport />*/}
+            <MenuSimpleCostReport /> 
+          </>
+        )
+
+
       case 'observations':
         return (
           <>
@@ -161,6 +179,20 @@ const Reports = () => {
           }}
         >
           Stock
+        </button>
+        <button
+          onClick={() => setActiveTab('costos')}
+          style={{
+            marginRight: 10,
+            padding: '8px 16px',
+            border: 'none',
+            borderBottom: activeTab === 'costos' ? '3px solid #007bff' : '3px solid transparent',
+            background: 'none',
+            cursor: 'pointer',
+            fontWeight: activeTab === 'costos' ? 'bold' : 'normal',
+          }}
+        >
+          Costos
         </button>
         <button
           onClick={() => setActiveTab('observations')}

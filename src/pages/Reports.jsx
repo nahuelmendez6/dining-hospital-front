@@ -114,7 +114,7 @@ const Reports = () => {
 
   return (
     <Layout>
-      <div style={{ marginBottom: 20 }}>
+      {/* <div style={{ marginBottom: 20 }}>
         <h2>Filtros Globales</h2>
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end' }}>
           <div>
@@ -135,7 +135,7 @@ const Reports = () => {
             </select>
           </div>
         </div>
-      </div>
+      </div> */}
 
       <nav style={{ marginBottom: 20, borderBottom: '1px solid #ccc' }}>
         <button

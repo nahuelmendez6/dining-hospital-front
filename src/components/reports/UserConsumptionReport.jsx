@@ -1,51 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React from 'react';
+import useUserConsumptionReport from '../../hooks/useUserConsumptionReport';
 
 const UserConsumptionReport = () => {
-  const [startDate, setStartDate] = useState(() => {
-    const d = new Date();
-    d.setDate(d.getDate() - 30);
-    return d.toISOString().slice(0, 10);
-  });
-  const [endDate, setEndDate] = useState(() => new Date().toISOString().slice(0, 10));
-  const [status, setStatus] = useState('');
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  const fetchReport = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const params = {};
-      if (startDate) params.start_date = startDate;
-      if (endDate) params.end_date = endDate;
-      if (status) params.status = status;
-
-      const response = await axios.get('http://localhost:8000/reports/user-consumption-report/', {
-        params,
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-        },
-      });
-
-      setData(response.data.results || []);
-    } catch (err) {
-      if (err.response) {
-        setError(`Error ${err.response.status}: ${err.response.data.detail || JSON.stringify(err.response.data)}`);
-      } else if (err.request) {
-        setError('No se recibió respuesta del servidor');
-      } else {
-        setError('Error: ' + err.message);
-      }
-      console.error('Error al obtener datos:', err);
-    }
-    setLoading(false);
+  const initialFilters = {
+    start_date: (() => {
+      const d = new Date();
+      d.setDate(d.getDate() - 30);
+      return d.toISOString().slice(0, 10);
+    })(),
+    end_date: new Date().toISOString().slice(0, 10),
+    status: '',
   };
 
-  useEffect(() => {
-    fetchReport();
-  }, [startDate, endDate, status]);
+  const { data, filters, setFilters, loading, error } = useUserConsumptionReport(initialFilters);
+
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
+  };
 
   return (
     <div className="w-full p-4">
@@ -56,8 +28,9 @@ const UserConsumptionReport = () => {
           <label>Fecha Inicio</label><br />
           <input
             type="date"
-            value={startDate}
-            onChange={e => setStartDate(e.target.value)}
+            name="start_date"
+            value={filters.start_date}
+            onChange={handleFilterChange}
             className="border p-1 rounded"
           />
         </div>
@@ -65,16 +38,18 @@ const UserConsumptionReport = () => {
           <label>Fecha Fin</label><br />
           <input
             type="date"
-            value={endDate}
-            onChange={e => setEndDate(e.target.value)}
+            name="end_date"
+            value={filters.end_date}
+            onChange={handleFilterChange}
             className="border p-1 rounded"
           />
         </div>
         <div>
           <label>Estado</label><br />
           <select
-            value={status}
-            onChange={e => setStatus(e.target.value)}
+            name="status"
+            value={filters.status}
+            onChange={handleFilterChange}
             className="border p-1 rounded"
           >
             <option value="">Todos (usados + pendientes)</option>

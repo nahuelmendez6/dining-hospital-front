@@ -1,39 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React from 'react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, Legend
 } from 'recharts';
+import useTicketsLast7Days from '../../hooks/useTicketsLast7Days';
+import './TicketsLast7DaysChart.css';
 
 const TicketsLast7DaysChart = () => {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchTickets = async () => {
-      try {
-        const response = await axios.get('http://localhost:8000/reports/tickets-last-7-days/', {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('accessToken')}` // Cambiá si no usás JWT
-          }
-        });
-        console.log('Datos recibidos:', response.data);
-        setData(response.data); // Los objetos tienen { date, count }
-      } catch (error) {
-        console.error('Error al obtener datos de tickets:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchTickets();
-  }, []);
+  const { data, loading, error } = useTicketsLast7Days();
 
   if (loading) return <p>Cargando datos...</p>;
+  if (error) return <p>Error al cargar los datos: {error}</p>;
 
   return (
-    <div style={{ width: '100%', height: '400px' }}>
-      <h2 style={{ marginBottom: '1rem' }}>Tickets últimos 7 días</h2>
+    <div className="tickets-chart-container">
+      <h2 className="tickets-chart-title">Tickets últimos 7 días</h2>
+
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
           <CartesianGrid strokeDasharray="3 3" />

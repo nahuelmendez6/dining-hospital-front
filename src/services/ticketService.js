@@ -68,6 +68,7 @@ export const generateTicket = async (pin, items) => {
       );
   
       // Devuelve todo el objeto tal cual viene del backend (incluye observaciones)
+      // console.log('Respuesta del backend:', data);
       return response.data;
   
     } catch (error) {

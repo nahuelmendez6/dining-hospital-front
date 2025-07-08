@@ -18,7 +18,7 @@ const UserFilterBar = ({ searchTerm, setSearchTerm, groupFilter, setGroupFilter 
           >
             <option value="">Todos los grupos</option>
             <option value="admin">Administrador</option>
-            <option value="hospital">Hospital</option>
+            <option value="comensal">Comensal</option>
             <option value="cocina">Cocina</option>
           </select>
         </div>

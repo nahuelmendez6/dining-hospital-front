@@ -1,35 +1,19 @@
-import React, { useState } from 'react';
-import { fetchStockMovements } from '../../services/reportsService.js';
-import { useAuth } from '../../contexts/AuthContext.jsx'
+import React from 'react';
+import useStockMovementReport from '../../hooks/useStockMovementReport';
 
-const StockMovementReport = ({ token }) => {
-
-    const { accessToken } = useAuth();
-
-  const [filters, setFilters] = useState({
+const StockMovementReport = () => {
+  const initialFilters = {
     start: '',
     end: '',
     type: '',
     menu_item_id: '',
     ingredient_id: ''
-  });
-  const [results, setResults] = useState([]);
-  const [loading, setLoading] = useState(false);
+  };
+
+  const { data: results, filters, setFilters, loading, error } = useStockMovementReport(initialFilters);
 
   const handleChange = (e) => {
     setFilters({ ...filters, [e.target.name]: e.target.value });
-  };
-
-  const handleSearch = async () => {
-    setLoading(true);
-    try {
-      const data = await fetchStockMovements(filters, accessToken);
-      setResults(data);
-    } catch (error) {
-      console.error('Error al cargar el reporte:', error);
-    } finally {
-      setLoading(false);
-    }
   };
 
   return (
@@ -57,31 +41,37 @@ const StockMovementReport = ({ token }) => {
           <input type="number" name="ingredient_id" value={filters.ingredient_id} onChange={handleChange} className="form-control" placeholder="ID Ingrediente" />
         </div>
         <div className="col-md">
-          <button className="btn btn-primary w-100" onClick={handleSearch} disabled={loading}>
+          <button className="btn btn-primary w-100" onClick={() => setFilters({ ...filters })} disabled={loading}>
             {loading ? 'Cargando...' : 'Buscar'}
           </button>
         </div>
       </div>
 
-      <table className="table table-sm table-striped table-hover align-middle text-center border">
-        <thead className="table-light">
-          <tr>
-            <th scope="col" className="border-end text-dark">ID</th>
-            <th scope="col" className="border-end text-dark">Tipo</th>
-            <th scope="col" className="border-end text-dark">Item</th>
-            <th scope="col" className="border-end text-dark">Ingrediente</th>
-            <th scope="col" className="border-end text-dark">Cantidad</th>
-            <th scope="col" className="border-end text-dark">Fecha</th>
-            <th scope="col" className="border-end text-dark">Usuario</th>
-            <th scope="col">Ticket</th>
-          </tr>
-        </thead>
-        <tbody className="table-group-divider">
-          {results.length > 0 ? (
-            results.map((r) => (
+      {loading ? (
+        <p>Cargando datos...</p>
+      ) : error ? (
+        <p className="text-red-600">{error}</p>
+      ) : results.length === 0 ? (
+        <p>No hay datos disponibles.</p>
+      ) : (
+        <table className="table table-sm table-striped table-hover align-middle text-center border">
+          <thead className="table-light">
+            <tr>
+              <th scope="col" className="border-end text-dark">ID</th>
+              <th scope="col" className="border-end text-dark">Tipo</th>
+              <th scope="col" className="border-end text-dark">Item</th>
+              <th scope="col" className="border-end text-dark">Ingrediente</th>
+              <th scope="col" className="border-end text-dark">Cantidad</th>
+              <th scope="col" className="border-end text-dark">Fecha</th>
+              <th scope="col" className="border-end text-dark">Usuario</th>
+              <th scope="col">Ticket</th>
+            </tr>
+          </thead>
+          <tbody className="table-group-divider">
+            {results.map((r) => (
               <tr key={r.id} className="small">
                 <td className="border-end">{r.id}</td>
-                <td className="text-capitalize border-end">{r.movement_type}</td>
+                <td className={`text-capitalize border-end ${r.movement_type === 'input' ? 'text-green' : 'text-red'}`}>{r.movement_type}</td>
                 <td className="border-end">{r.menu_item_name || '-'}</td>
                 <td className="border-end">{r.ingredient_name || '-'}</td>
                 <td className="border-end">{r.quantity}</td>
@@ -89,18 +79,10 @@ const StockMovementReport = ({ token }) => {
                 <td className="border-end">{r.performed_by_name || '-'}</td>
                 <td>{r.related_ticket_id || '-'}</td>
               </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan="8" className="text-center text-muted py-3 small">
-                Sin resultados
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
-
-
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 };

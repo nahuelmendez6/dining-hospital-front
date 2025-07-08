@@ -80,6 +80,34 @@ const MenuTicketForm = ({ menuItems }) => {
     });
   };
 
+  const formatDateTime = (dateString) => {
+    if (!dateString) return { fecha: 'Fecha inválida', hora: 'Hora inválida' };
+
+    // Asegura el formato ISO reemplazando espacio con 'T'
+    const isoString = dateString.replace(' ', 'T');
+    const date = new Date(isoString);
+
+    if (isNaN(date.getTime())) {
+      return { fecha: 'Fecha inválida', hora: 'Hora inválida' };
+    }
+
+    const fecha = date.toLocaleDateString('es-ES', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    });
+
+    const hora = date.toLocaleTimeString('es-ES', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false,
+    });
+
+    return { fecha, hora };
+  };
+  
+
   const getStatusBadge = (status) => {
     const statusConfig = {
       'pending': { class: 'bg-warning', text: 'Pendiente' },
@@ -91,6 +119,7 @@ const MenuTicketForm = ({ menuItems }) => {
     return <span className={`badge ${config.class} text-white`}>{config.text}</span>;
   };
 
+  
   return (
     <div className="container d-flex align-items-center justify-content-center min-vh-100 px-3">
   <div className="w-100" style={{ maxWidth: 480 }}>
@@ -160,47 +189,55 @@ const MenuTicketForm = ({ menuItems }) => {
           </form>
         </>
       ) : (
-        <div className="ticket-success text-center">
-          <h3 className="fw-bold mb-3">🎉 Ticket Generado</h3>
-
-          <div className="bg-warning-subtle p-3 rounded-4 border border-warning mb-3">
-            <h6 className="text-warning-emphasis">Tu frase clave es:</h6>
-            <h2 className="fw-bold">{ticket.words}</h2>
-          </div>
-
-          {getStatusBadge(ticket.status)}
-
-          <div className="text-start mt-3 small">
-            <p><strong>👤 Nombre:</strong> {ticket.user}</p>
-            <p><strong>🕑 Turno:</strong> {ticket.shift}</p>
-            <p><strong>📅 Fecha:</strong> {new Date(ticket.date).toLocaleDateString()}</p>
-            <p><strong>⏰ Hora:</strong> {formatTime(ticket.date)}</p>
-          </div>
-
-          {ticket.items && ticket.items.length > 0 && (
-            <div className="mt-3 text-start">
-              <h6 className="text-secondary">🧾 Ítems seleccionados:</h6>
-              <ul className="list-group list-group-flush">
-                {ticket.items.map((item, index) => (
-                  <li
-                    key={index}
-                    className="list-group-item d-flex justify-content-between align-items-center"
-                  >
-                    <span>{item.name}</span>
-                    <span className="badge bg-primary rounded-pill">
-                      {item.quantity}
-                    </span>
-                  </li>
-                ))}
-              </ul>
+        (() => {
+          console.log('ticket.date:', ticket.date);
+          const { fecha, hora } = formatDateTime(ticket.date);
+          
+          return (
+            <div className="ticket-success text-center">
+              <h3 className="fw-bold mb-3">Ticket Generado</h3>
+      
+              <div className="bg-warning-subtle p-3 rounded-4 border border-warning mb-3">
+                <h6 className="text-warning-emphasis">Tu frase clave es:</h6>
+                <h2 className="fw-bold">{ticket.words}</h2>
+              </div>
+      
+              {getStatusBadge(ticket.status)}
+      
+              <div className="text-start mt-3">
+                <p style={{ fontSize: '1.1rem' }}><strong>Nombre:</strong> {ticket.user}</p>
+                <p style={{ fontSize: '1.1rem' }}><strong>Turno:</strong> {ticket.shift}</p>
+                <p style={{ fontSize: '1.1rem' }}><strong>Fecha:</strong> {fecha}</p>
+                <p style={{ fontSize: '1.1rem' }}><strong>Hora:</strong> {hora}</p>
+              </div>
+      
+              {ticket.items && ticket.items.length > 0 && (
+                <div className="mt-3 text-start">
+                  <h6 className="text-secondary">Ítems seleccionados:</h6>
+                  <ul className="list-group list-group-flush">
+                    {ticket.items.map((item, index) => (
+                      <li
+                        key={index}
+                        className="list-group-item d-flex justify-content-between align-items-center"
+                      >
+                        <span>{item.name}</span>
+                        <span className="badge bg-primary rounded-pill">
+                          {item.quantity}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+      
+              <button className="btn btn-outline-primary mt-4 w-100" onClick={() => setTicket(null)}>
+                <i className="bi bi-plus-circle me-2"></i>
+                Generar Nuevo Ticket
+              </button>
             </div>
-          )}
-
-          <button className="btn btn-outline-primary mt-4 w-100" onClick={() => setTicket(null)}>
-            <i className="bi bi-plus-circle me-2"></i>
-            Generar Nuevo Ticket
-          </button>
-        </div>
+          );
+        })()
+        
       )}
     </div>
   </div>

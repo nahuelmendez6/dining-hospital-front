@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import Layout from "../components/Layout";
 import { useAuth } from "../contexts/AuthContext";
 import { getTickets } from "../services/ticketService";
-import { getTicketCountByShift } from "../services/reportService";
+import { getTicketCountByShift } from "../services/reportsService";
 
 import DateFilter from "../components/tickets/DateFilter";
 import TicketRow from "../components/tickets/TicketRow";

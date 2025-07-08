@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { useAuth } from '../../contexts/AuthContext.jsx';
 import { Bar } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -11,50 +9,27 @@ import {
   Tooltip,
   Legend
 } from 'chart.js';
+import useMenuSimpleCostReport from '../../hooks/useMenuSimpleCostReport';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const MenuSimpleCostReport = () => {
-  const { accessToken } = useAuth();
+  const initialStartDate = (() => {
+    const d = new Date();
+    d.setDate(d.getDate() - 30);
+    return d.toISOString().slice(0, 10);
+  })();
+  const initialEndDate = new Date().toISOString().slice(0, 10);
 
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const { data, filters, setFilters, loading, error } = useMenuSimpleCostReport({
+    start: initialStartDate,
+    end: initialEndDate,
+  });
 
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-
-  const fetchData = async () => {
-    if (!startDate || !endDate) return;
-
-    setLoading(true);
-    try {
-      const res = await axios.get('http://localhost:8000/reports/menu-simple-cost/', {
-        params: { start: startDate, end: endDate },
-        headers: { Authorization: `Bearer ${accessToken}` },
-      });
-      setData(res.data || []);
-    } catch (error) {
-      console.error('Error al obtener el reporte:', error);
-    } finally {
-      setLoading(false);
-    }
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
   };
-
-  // Inicializo fechas: último mes
-  useEffect(() => {
-    const today = new Date().toISOString().slice(0, 10);
-    const lastMonth = new Date();
-    lastMonth.setDate(lastMonth.getDate() - 30);
-    const lastMonthStr = lastMonth.toISOString().slice(0, 10);
-
-    setStartDate(lastMonthStr);
-    setEndDate(today);
-  }, []);
-
-  // Refrescar datos cuando cambian fechas
-  useEffect(() => {
-    fetchData();
-  }, [startDate, endDate]);
 
   const chartData = {
     labels: data.map(d => d.menu_item),
@@ -75,7 +50,7 @@ const MenuSimpleCostReport = () => {
     plugins: {
       title: {
         display: true,
-        text: `Costo proyectado por ítem sin receta (${startDate} a ${endDate})`,
+        text: `Costo proyectado por ítem sin receta (${filters.start} a ${filters.end})`,
         font: { size: 18 }
       },
       tooltip: {
@@ -89,7 +64,7 @@ const MenuSimpleCostReport = () => {
       x: {
         beginAtZero: true,
         ticks: {
-          callback: v => `$${v}`
+          callback: v => `${v}`
         }
       }
     }
@@ -106,9 +81,10 @@ const MenuSimpleCostReport = () => {
           <input
             type="date"
             className="form-control"
-            value={startDate}
-            onChange={e => setStartDate(e.target.value)}
-            max={endDate}
+            name="start"
+            value={filters.start}
+            onChange={handleFilterChange}
+            max={filters.end}
           />
         </div>
         <div className="col-md-3">
@@ -116,9 +92,10 @@ const MenuSimpleCostReport = () => {
           <input
             type="date"
             className="form-control"
-            value={endDate}
-            onChange={e => setEndDate(e.target.value)}
-            min={startDate}
+            name="end"
+            value={filters.end}
+            onChange={handleFilterChange}
+            min={filters.start}
             max={new Date().toISOString().slice(0, 10)}
           />
         </div>
@@ -126,6 +103,8 @@ const MenuSimpleCostReport = () => {
 
       {loading ? (
         <p>Cargando datos...</p>
+      ) : error ? (
+        <p className="text-red-600">{error}</p>
       ) : data.length === 0 ? (
         <p className="text-muted">No hay ítems sin receta consumidos en el rango seleccionado.</p>
       ) : (

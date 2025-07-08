@@ -1,50 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React from 'react';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer, Legend
 } from 'recharts';
+import useItemConsumptionVsStock from '../../hooks/useItemConsumptionVsStock';
 
 const ItemConsumptionVsStockChart = () => {
-  const [data, setData] = useState([]);
-  const [startDate, setStartDate] = useState('2025-05-22');
-  const [endDate, setEndDate] = useState('2025-06-22');
-  const [status, setStatus] = useState('');
-  const [loading, setLoading] = useState(false);
-
-  const fetchData = async () => {
-    setLoading(true);
-    try {
-      const params = {
-        start_date: startDate,
-        end_date: endDate,
-      };
-      if (status) params.status = status;
-
-      const response = await axios.get('http://localhost:8000/reports/item-consumption-vs-stock/', {
-        params,
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-        },
-      });
-
-      const apiData = response.data.results.map(item => ({
-        name: item.item__name,
-        consumed: item.total_consumed,
-        stock: item.item__stock,
-      }));
-
-      console.log('Datos recibidos:', apiData);
-      setData(apiData);
-    } catch (error) {
-      console.error('Error al obtener datos:', error);
-    } finally {
-      setLoading(false);
-    }
+  const initialFilters = {
+    start_date: '2025-05-22',
+    end_date: '2025-06-22',
+    status: '',
   };
 
-  useEffect(() => {
-    fetchData();
-  }, [startDate, endDate, status]);
+  const { data, filters, setFilters, loading, error } = useItemConsumptionVsStock(initialFilters);
+
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
+  };
 
   return (
     <div className="w-full">
@@ -55,8 +27,9 @@ const ItemConsumptionVsStockChart = () => {
           <label className="block text-sm">Fecha Inicio</label>
           <input
             type="date"
-            value={startDate}
-            onChange={e => setStartDate(e.target.value)}
+            name="start_date"
+            value={filters.start_date}
+            onChange={handleFilterChange}
             className="border p-1 rounded"
           />
         </div>
@@ -64,16 +37,18 @@ const ItemConsumptionVsStockChart = () => {
           <label className="block text-sm">Fecha Fin</label>
           <input
             type="date"
-            value={endDate}
-            onChange={e => setEndDate(e.target.value)}
+            name="end_date"
+            value={filters.end_date}
+            onChange={handleFilterChange}
             className="border p-1 rounded"
           />
         </div>
         <div>
           <label className="block text-sm">Estado</label>
           <select
-            value={status}
-            onChange={e => setStatus(e.target.value)}
+            name="status"
+            value={filters.status}
+            onChange={handleFilterChange}
             className="border p-1 rounded"
           >
             <option value="">Todos</option>
@@ -86,6 +61,8 @@ const ItemConsumptionVsStockChart = () => {
 
       {loading ? (
         <p>Cargando...</p>
+      ) : error ? (
+        <p>{error}</p>
       ) : (
         <div style={{ width: '100%', height: 400 }}>
           <ResponsiveContainer width="100%" height="100%">

@@ -1,61 +1,41 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React from 'react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, Legend, Cell
 } from 'recharts';
+import useTicketsByShift from '../../hooks/useTicketsByShift';
 
-// Función para generar un color HSL distinto según el índice
 const getColor = (index) => {
-  const hue = (index * 137.508) % 360; // número áureo para buena distribución
+  const hue = (index * 137.508) % 360;
   return `hsl(${hue}, 70%, 50%)`;
 };
 
 const TicketsByShiftChart = () => {
-  const [data, setData] = useState([]);
-  const [startDate, setStartDate] = useState('2025-06-15');
-  const [endDate, setEndDate] = useState('2025-06-22');
-  const [status, setStatus] = useState('');
-  const [loading, setLoading] = useState(false);
-
-  const fetchTickets = async () => {
-    setLoading(true);
-    try {
-      const params = {};
-      if (startDate) params.start_date = startDate;
-      if (endDate) params.end_date = endDate;
-      if (status) params.status = status;
-
-      const response = await axios.get('http://localhost:8000/reports/tickets-by-shift/', {
-        params,
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`
-        }
-      });
-
-      setData(response.data.results);
-    } catch (error) {
-      console.error('Error al cargar tickets:', error);
-    } finally {
-      setLoading(false);
-    }
+  const initialFilters = {
+    start_date: '2025-06-15',
+    end_date: '2025-06-22',
+    status: '',
   };
 
-  useEffect(() => {
-    fetchTickets();
-  }, [startDate, endDate, status]);
+  const { data, filters, setFilters, loading, error } = useTicketsByShift(initialFilters);
+
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
+  };
 
   return (
     <div className="w-full" style={{ height: 450, display: 'flex', flexDirection: 'column' }}>
       <h2 className="text-xl font-bold mb-4">Tickets por Turno</h2>
-  
+
       <div className="flex gap-4 mb-4 items-end">
         <div>
           <label>Fecha Inicio</label>
           <input
             type="date"
-            value={startDate}
-            onChange={e => setStartDate(e.target.value)}
+            name="start_date"
+            value={filters.start_date}
+            onChange={handleFilterChange}
             className="border p-1 rounded"
           />
         </div>
@@ -63,16 +43,18 @@ const TicketsByShiftChart = () => {
           <label>Fecha Fin</label>
           <input
             type="date"
-            value={endDate}
-            onChange={e => setEndDate(e.target.value)}
+            name="end_date"
+            value={filters.end_date}
+            onChange={handleFilterChange}
             className="border p-1 rounded"
           />
         </div>
         <div>
           <label>Status</label>
           <select
-            value={status}
-            onChange={e => setStatus(e.target.value)}
+            name="status"
+            value={filters.status}
+            onChange={handleFilterChange}
             className="border p-1 rounded"
           >
             <option value="">Todos</option>
@@ -82,9 +64,11 @@ const TicketsByShiftChart = () => {
           </select>
         </div>
       </div>
-  
+
       {loading ? (
         <p>Cargando...</p>
+      ) : error ? (
+        <p>{error}</p>
       ) : (
         <div style={{ flexGrow: 1, minHeight: 0 }}>
           <ResponsiveContainer width="100%" height="100%">

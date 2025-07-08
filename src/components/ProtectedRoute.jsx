@@ -20,8 +20,8 @@ const ProtectedRoute = ({ children, requiredGroups = [] }) => {
     console.log("¿Tiene acceso?:", hasAccess);
 
     if (!hasAccess) {
-      // Si el usuario pertenece al grupo 'hospital', redirigir a tickets
-      if (isInAnyGroup(['hospital'])) {
+      // Si el usuario pertenece al grupo 'comensal', redirigir a tickets
+      if (isInAnyGroup(['comensal'])) {
         return <Navigate to="/tickets" replace />;
       }
       // Si no, ruta no autorizada

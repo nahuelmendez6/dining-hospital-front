@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { useAuth } from '../../contexts/AuthContext.jsx';
 import { Bar } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -11,43 +9,27 @@ import {
   Tooltip,
   Legend
 } from 'chart.js';
+import useTotalIngredientConsumptionReport from '../../hooks/useTotalIngredientConsumptionReport';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const TotalIngredientConsumptionReport = () => {
-  const { accessToken } = useAuth();
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
+  const initialStartDate = (() => {
+    const d = new Date();
+    d.setDate(d.getDate() - 30);
+    return d.toISOString().slice(0, 10);
+  })();
+  const initialEndDate = new Date().toISOString().slice(0, 10);
 
-  const fetchData = async () => {
-    if (!startDate || !endDate) return;
-    setLoading(true);
-    try {
-      const res = await axios.get('http://localhost:8000/reports/ingredient-report/', {
-        params: { start: startDate, end: endDate },
-        headers: { Authorization: `Bearer ${accessToken}` },
-      });
-      setData(res.data || []);
-    } catch (err) {
-      console.error('Error al obtener datos:', err);
-    } finally {
-      setLoading(false);
-    }
+  const { data, filters, setFilters, loading, error } = useTotalIngredientConsumptionReport({
+    start: initialStartDate,
+    end: initialEndDate,
+  });
+
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
   };
-
-  useEffect(() => {
-    const today = new Date().toISOString().slice(0, 10);
-    const monthAgo = new Date();
-    monthAgo.setDate(monthAgo.getDate() - 30);
-    setStartDate(monthAgo.toISOString().slice(0, 10));
-    setEndDate(today);
-  }, []);
-
-  useEffect(() => {
-    if (startDate && endDate) fetchData();
-  }, [startDate, endDate]);
 
   const chartData = {
     labels: data.map(d => d.ingredient_name),
@@ -79,7 +61,7 @@ const TotalIngredientConsumptionReport = () => {
     scales: {
       x: {
         beginAtZero: true,
-        ticks: { callback: v => `$${v}` }
+        ticks: { callback: v => `${v}` }
       }
     }
   };
@@ -95,8 +77,9 @@ const TotalIngredientConsumptionReport = () => {
           <input
             type="date"
             className="form-control"
-            value={startDate}
-            onChange={e => setStartDate(e.target.value)}
+            name="start"
+            value={filters.start}
+            onChange={handleFilterChange}
           />
         </div>
         <div className="col-md-3">
@@ -104,14 +87,17 @@ const TotalIngredientConsumptionReport = () => {
           <input
             type="date"
             className="form-control"
-            value={endDate}
-            onChange={e => setEndDate(e.target.value)}
+            name="end"
+            value={filters.end}
+            onChange={handleFilterChange}
           />
         </div>
       </div>
 
       {loading ? (
         <p>Cargando...</p>
+      ) : error ? (
+        <p className="text-red-600">{error}</p>
       ) : data.length === 0 ? (
         <p className="text-muted">Sin datos para el rango seleccionado</p>
       ) : (

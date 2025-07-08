@@ -1,44 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React from 'react';
+import useTicketSummary from '../../hooks/useTicketSummary';
 
 const TicketSummaryCards = () => {
-  const [summary, setSummary] = useState(null);
+  const { cardData, loading, error } = useTicketSummary();
 
-  useEffect(() => {
-    axios.get('http://localhost:8000/reports/summary/')
-      .then(res => setSummary(res.data))
-      .catch(err => console.error(err));
-  }, []);
-
-  const cardData = summary ? [
-    {
-      title: 'Total Tickets',
-      value: summary.total_tickets,
-      subtitle: 'Total generados este mes',
-      bgClass: 'bg-primary'
-    },
-    {
-      title: 'Tickets Pendientes',
-      value: summary.pending_tickets,
-      subtitle: 'Aún no utilizados',
-      bgClass: 'bg-warning'
-    },
-    {
-      title: 'Tickets Usados',
-      value: summary.used_tickets,
-      subtitle: `${Math.round((summary.used_tickets / summary.total_tickets) * 100)}% de utilización`,
-      bgClass: 'bg-success'
-    },
-    {
-      title: 'Usuarios Activos',
-      value: summary.active_users,
-      subtitle: 'Con actividad reciente',
-      bgClass: 'bg-info'
-    }
-  ] : [];
-
-  if (!summary) {
+  if (loading) {
     return <p>Cargando resumen...</p>;
+  }
+
+  if (error) {
+    return <p>{error}</p>;
   }
 
   return (

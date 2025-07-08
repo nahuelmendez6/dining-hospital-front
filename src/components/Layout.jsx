@@ -172,7 +172,11 @@ const Layout = ({ children }) => {
         <div className="sidebar-header">
           <img src={logonavbar} alt="Logo" className="img-fluid" />
         </div>
+        
         <ul className="components">{renderMenuItems()}</ul>
+        <div className="sidebar-footer text-center mt-auto mb-3" style={{fontSize: '0.8rem', color: '#888'}}>
+            Powered By Aconcagua Code
+          </div>
       </nav>
 
       <div id="content" className={sidebarCollapsed ? 'sidebar-collapsed' : ''}>
@@ -243,6 +247,7 @@ const Layout = ({ children }) => {
               <i className="bi bi-box-arrow-right"></i> Salir
             </button>
           </div>
+          
         </nav>
 
         <div className="container-fluid p-4">{children}</div>

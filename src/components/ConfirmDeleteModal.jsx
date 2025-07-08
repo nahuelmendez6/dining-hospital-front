@@ -1,10 +1,25 @@
-export default function ConfirmDeleteModal({ shift, onCancel, onConfirm }) {
-    return (
-      <div className="modal">
-        <p>¿Estás seguro que deseas eliminar el turno <strong>{shift.name}</strong>?</p>
-        <button onClick={onConfirm}>Sí, eliminar</button>
-        <button onClick={onCancel}>Cancelar</button>
-      </div>
-    );
-  }
-  
+import React from 'react';
+import { Modal, Button } from 'react-bootstrap';
+
+const ConfirmDeleteModal = ({ show, onHide, onConfirm, title, message }) => {
+  return (
+    <Modal show={show} onHide={onHide} centered>
+      <Modal.Header closeButton>
+        <Modal.Title>{title}</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <p>{message}</p>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="secondary" onClick={onHide}>
+          Cancelar
+        </Button>
+        <Button variant="danger" onClick={onConfirm}>
+          Eliminar
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  );
+};
+
+export default ConfirmDeleteModal;

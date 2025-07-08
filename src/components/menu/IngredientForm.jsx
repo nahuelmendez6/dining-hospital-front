@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Form, Button, Alert, Row, Col, Table } from "react-bootstrap";
-import axios from "axios";
+import { useIngredients } from "../../hooks/useIngredients";
+import ConfirmDeleteModal from "../ConfirmDeleteModal";
 
 const UNIT_OPTIONS = [
   { value: "unit", label: "Unidad" },
@@ -16,6 +17,7 @@ const COST_TYPE_OPTIONS = [
 ];
 
 function IngredientForm({ token }) {
+  const { ingredients, error, addIngredient, editIngredient, removeIngredient, setError } = useIngredients(token);
   const [formData, setFormData] = useState({
     name: "",
     quantity_in_stock: 0,
@@ -25,28 +27,10 @@ function IngredientForm({ token }) {
     description: "",
     min_stock: 0,
   });
-
-  const [error, setError] = useState(null);
-  const [ingredients, setIngredients] = useState([]);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [ingredientToDelete, setIngredientToDelete] = useState(null);
 
   const isEditing = formData?.id != null;
-
-  const fetchIngredients = async () => {
-    try {
-      const response = await axios.get("http://localhost:8000/core/ingredients/", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      setIngredients(response.data);
-    } catch (err) {
-      console.error("Error al cargar ingredientes:", err);
-    }
-  };
-
-  useEffect(() => {
-    fetchIngredients();
-  }, []);
 
   const resetForm = () => {
     setFormData({
@@ -80,45 +64,28 @@ function IngredientForm({ token }) {
       cost_type: formData.cost_type || null,
     };
 
-    try {
-      if (isEditing) {
-        await axios.patch(
-          `http://localhost:8000/core/ingredients/${formData.id}/`,
-          payload,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-      } else {
-        await axios.post(
-          "http://localhost:8000/core/ingredients/",
-          payload,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-      }
+    if (isEditing) {
+      await editIngredient(formData.id, payload);
+    } else {
+      await addIngredient(payload);
+    }
 
-      resetForm();
-      fetchIngredients();
-    } catch (err) {
-      console.error(err);
-      setError("Error al guardar ingrediente. Verifica los datos ingresados.");
+    if (!error) {
+        resetForm();
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("¿Estás seguro de eliminar este ingrediente?")) return;
+  const handleDelete = (id) => {
+    setIngredientToDelete(id);
+    setShowConfirmModal(true);
+  };
 
-    try {
-      await axios.delete(`http://localhost:8000/core/ingredients/${id}/`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      fetchIngredients();
-    } catch (err) {
-      console.error(err);
-      alert("Error al eliminar ingrediente.");
+  const handleConfirmDelete = () => {
+    if (ingredientToDelete) {
+      removeIngredient(ingredientToDelete);
+      setIngredientToDelete(null);
     }
+    setShowConfirmModal(false);
   };
 
   const handleEdit = (ing) => {
@@ -284,11 +251,18 @@ function IngredientForm({ token }) {
             ))
           ) : (
             <tr>
-              <td colSpan="6">No hay ingredientes cargados.</td>
+              <td colSpan="7">No hay ingredientes cargados.</td>
             </tr>
           )}
         </tbody>
       </Table>
+      <ConfirmDeleteModal
+        show={showConfirmModal}
+        onHide={() => setShowConfirmModal(false)}
+        onConfirm={handleConfirmDelete}
+        title="Confirmar Eliminación"
+        message={`¿Estás seguro de que deseas eliminar el ingrediente?`}
+      />
     </div>
   );
 }

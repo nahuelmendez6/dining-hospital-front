@@ -2,7 +2,14 @@ import axios from 'axios';
 
 const API_URL = 'http://localhost:8000/';
 
-// funcion para crear usuario
+/**
+ * Crea un nuevo usuario enviando los datos al backend.
+ * 
+ * @param {Object} userData - Datos del usuario a crear.
+ * @param {string} token - Token de autenticación.
+ * @returns {Promise<Object>} - Respuesta completa del servidor.
+ * @throws {Error} - Si hay un error en la solicitud.
+ */
 export const createUser = async (userData, token) => {
     try {
         // Preparar los datos exactamente como los espera el backend
@@ -47,7 +54,14 @@ export const createUser = async (userData, token) => {
 };
 
 
-// funcion para obtener observaciones
+
+/**
+ * Obtiene la lista de observaciones disponibles desde el backend.
+ * 
+ * @param {string} token - Token de autenticación.
+ * @returns {Promise<Object[]>} - Lista de observaciones.
+ * @throws {Error} - Si no se proporciona token o ocurre un error.
+ */
 export const getObservations = async (token) => {
     if (!token) {
         throw new Error('Token no proporcionado');
@@ -74,9 +88,13 @@ export const getObservations = async (token) => {
 }
 
 
-
-// funcion para obtener departamentos
-/** */
+/**
+ * Obtiene la lista de departamentos disponibles desde el backend.
+ * 
+ * @param {string} token - Token de autenticación.
+ * @returns {Promise<Object[]>} - Lista de departamentos.
+ * @throws {Error} - Si no se proporciona token o ocurre un error.
+ */
 export const getDepartments = async (token) => {
     if (!token) {
         throw new Error('Token no proporcionado');
@@ -109,7 +127,13 @@ export const getDepartments = async (token) => {
     }
 }
 
-// funcion para obtener estadisticas de usuarios
+/**
+ * Obtiene estadísticas generales de usuarios desde el backend.
+ * 
+ * @param {string} token - Token de autenticación.
+ * @returns {Promise<Object>} - Datos estadísticos.
+ * @throws {Error} - Si no se proporciona token o ocurre un error.
+ */
 export const getUserStats = async(token) => {
     if (!token) {
         throw new Error('Token no proporcionado');
@@ -134,7 +158,13 @@ export const getUserStats = async(token) => {
     }
 }
 
-// funcion para obtener usuarios
+/**
+ * Obtiene la lista de usuarios registrados.
+ * 
+ * @param {string} token - Token de autenticación.
+ * @returns {Promise<Object[]>} - Lista de usuarios.
+ * @throws {Error} - Si no se proporciona token o ocurre un error.
+ */
 export const getUsers = async (token) => {
     if (!token) {
         throw new Error('Token no proporcionado');
@@ -161,7 +191,15 @@ export const getUsers = async (token) => {
     }
 };
 
-// funcion para actualizar un usuario existente
+/**
+ * Actualiza los datos de un usuario existente.
+ * 
+ * @param {number|string} userId - ID del usuario a actualizar.
+ * @param {Object} userData - Datos modificados del usuario.
+ * @param {string} token - Token de autenticación.
+ * @returns {Promise<Object>} - Respuesta del servidor.
+ * @throws {Error} - Si ocurre un error durante la solicitud.
+ */
 export const updateUser = async (userId, userData, token) => {
     try {
         const requestData = {
@@ -195,7 +233,14 @@ export const updateUser = async (userId, userData, token) => {
     }
 };
 
-// funcion para eliminar un usuario
+/**
+ * Elimina un usuario del sistema.
+ * 
+ * @param {number|string} userId - ID del usuario a eliminar.
+ * @param {string} token - Token de autenticación.
+ * @returns {Promise<Object>} - Respuesta del servidor.
+ * @throws {Error} - Si ocurre un error al eliminar.
+ */
 export const deleteUser = async (userId, token) => {
     try {
         console.log(`Eliminando usuario ID ${userId}...`);

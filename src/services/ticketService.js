@@ -2,6 +2,10 @@ import axios from 'axios';
 
 const API_URL = 'http://localhost:8000/';
 
+/**
+ * Mapeo de mensajes de error personalizados para mejorar la experiencia del usuario.
+ * Estos mensajes reemplazan respuestas técnicas del backend por explicaciones comprensibles.
+ */
 const ERROR_MESSAGES = {
   'PIN incorrecto': 'El PIN ingresado no es válido. Por favor, intente nuevamente.',
   'No hay turno activo en este momento': 'El comedor no está abierto en este momento. Por favor, intente durante el horario de servicio.',
@@ -12,7 +16,12 @@ const ERROR_MESSAGES = {
   'default': 'Ha ocurrido un error al generar el ticket. Por favor, intente nuevamente.'
 };
 
-// Función para generar los datos del QR
+/**
+ * Genera los datos que se incluirán dentro del código QR del ticket.
+ * 
+ * @param {Object} ticketData - Información del ticket generado.
+ * @returns {string} - Cadena JSON con los datos relevantes para el QR.
+ */
 const generateQRData = (ticketData) => {
   return JSON.stringify({
     ticket_id: ticketData.ticket_id,
@@ -26,7 +35,12 @@ const generateQRData = (ticketData) => {
 };
 
 
-
+/**
+ * Consulta al backend para obtener el turno actual activo (si existe).
+ * 
+ * @returns {Promise<Object>} - Objeto con información del turno o mensaje indicando que no hay turno activo.
+ * @throws {Error} - Si no se puede conectar con el servidor o hay un fallo inesperado.
+ */
 export const getCurrentShift = async () => {
 
     try {
@@ -51,12 +65,20 @@ export const getCurrentShift = async () => {
 }
 
 
-
+/**
+ * Genera un ticket nuevo enviando el PIN y los ítems seleccionados.
+ * 
+ * @param {string} pin - Código PIN ingresado por el usuario.
+ * @param {Array} items - Lista de ítems seleccionados del menú (puede estar vacía).
+ * @returns {Promise<Object>} - Datos completos del ticket generado.
+ * @throws {Error} - Si ocurre algún error con el PIN, el turno o el servidor.
+ */
 export const generateTicket = async (pin, items) => {
     try {
       console.log('Enviando PIN:', pin);
       console.log('Enviando ITEMS', items);
-  
+      console.log("Payload final:", { pin, items });
+
       const response = await axios.post(
         `${API_URL}tickets/new-v2/`,
         { pin, items },
@@ -116,7 +138,14 @@ export const generateTicket = async (pin, items) => {
   };
   
 
-
+/**
+ * Obtiene todos los tickets generados para una fecha específica.
+ * 
+ * @param {string} token - Token de autenticación JWT.
+ * @param {string} date - Fecha en formato 'YYYY-MM-DD'.
+ * @returns {Promise<Array>} - Lista de tickets emitidos para la fecha dada.
+ * @throws {Error} - Si no se proporciona token o hay un error de red/backend.
+ */
 export const getTickets = async (token, date) => {
     if (!token) throw new Error('Token no proporcionado');
     try {

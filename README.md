@@ -1,70 +1,87 @@
-# Getting Started with Create React App
+# TicMeal - Sistema de Gestión de Comedor Hospitalario
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+TicMeal es una aplicación web frontend desarrollada en React para la gestión integral del servicio de comedor en un hospital. Permite a los empleados generar tickets de comida, al personal de cocina administrar los menús y a los administradores supervisar la operación a través de reportes.
 
-## Available Scripts
+## ✨ Características Principales
 
-In the project directory, you can run:
+*   **🎟️ Autogestión de Tickets:** Los empleados pueden generar sus propios tickets de comida a través de una interfaz simple, usando un PIN personal.
+*   **📱 Validación con QR:** Cada ticket genera un código QR único para su validación y canje en el comedor.
+*   **👤 Gestión de Usuarios:** Interfaz de administrador para crear, editar, y eliminar usuarios, asignando roles (`admin`, `cocina`, `supervisor`).
+*   **🍔 Administración de Menú:** El personal de cocina puede crear platos, gestionar ingredientes y configurar los menús disponibles en cada turno.
+*   **📅 Control de Turnos:** Sistema para definir los horarios de los turnos de comida (desayuno, almuerzo, cena).
+*   **📊 Reportes y Estadísticas:** Visualización de datos clave como tickets emitidos por turno, consumo por usuario y otros indicadores para la toma de decisiones.
+*   **🔐 Rutas Protegidas:** Acceso a las diferentes secciones de la aplicación restringido por roles de usuario.
 
-### `npm start`
+## 🚀 Tecnologías Utilizadas
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+*   **[React 18.2.0](https://reactjs.org/)**: Biblioteca principal para la construcción de la interfaz de usuario.
+*   **[Vite](https://vitejs.dev/)**: Herramienta de compilación y servidor de desarrollo rápido.
+*   **[React Router DOM](https://reactrouter.com/)**: Para el enrutamiento del lado del cliente.
+*   **[Bootstrap](https://getbootstrap.com/)**: Framework de CSS para el diseño y la responsividad.
+*   **[Axios](https://axios-http.com/)**: Cliente HTTP para la comunicación con la API del backend.
+*   **[Chart.js](https://www.chartjs.org/) / [Recharts](https://recharts.org/)**: Bibliotecas para la creación de gráficos y visualización de datos.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 🏁 Empezando
 
-### `npm test`
+Para obtener una copia local y poner en marcha el proyecto, sigue estos pasos.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Prerrequisitos
 
-### `npm run build`
+Asegúrate de tener Node.js y npm instalados en tu máquina.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+*   npm
+    ```sh
+    npm install npm@latest -g
+    ```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Instalación
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+1.  Clona el repositorio
+    ```sh
+    git clone https://github.com/tu_usuario/hospital-cafeteria.git
+    ```
+2.  Navega al directorio del proyecto
+    ```sh
+    cd hospital-cafeteria
+    ```
+3.  Instala las dependencias de NPM
+    ```sh
+    npm install
+    ```
 
-### `npm run eject`
+## 🔧 Uso
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Para iniciar la aplicación en modo de desarrollo, ejecuta:
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```sh
+npm run dev
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+Esto iniciará el servidor de desarrollo de Vite y abrirá la aplicación en [http://localhost:5173](http://localhost:5173) (o el puerto que tengas configurado).
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+Para compilar la aplicación para producción, usa:
 
-## Learn More
+```sh
+npm run build
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## 📂 Estructura del Proyecto
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```
+/src
+├── assets/         # Imágenes, logos y otros archivos estáticos
+├── components/     # Componentes de React reutilizables
+├── contexts/       # Contextos de React (ej. AuthContext)
+├── hooks/          # Hooks personalizados
+├── pages/          # Componentes que representan cada página de la app
+├── services/       # Lógica para comunicarse con la API externa
+└── main.jsx        # Punto de entrada principal de la aplicación
+```
 
-### Code Splitting
+## 📄 Licencia
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+Distribuido bajo la Licencia MIT. Consulta `LICENSE` para más información.
 
-### Analyzing the Bundle Size
+## 👤 Autor
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+**Nahuel**

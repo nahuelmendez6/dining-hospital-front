@@ -14,17 +14,12 @@ const Layout = ({ children }) => {
 
   const {accessToken} = useAuth(); 
 
-  // const token = localStorage.getItem("token"); 
+  
   useEffect(() => {
     
     const fetchNotifications = async () => {
         try {
-        //   const token = localStorage.getItem("token"); // ✅ leer siempre el valor actual
-        // if (!token) {
-        //   console.warn("Token no disponible para notificaciones");
-        //   return;
-        // }
-        const response = await fetch("http://localhost:8000/core/stock-notifications/", {
+          const response = await fetch("http://localhost:8000/core/stock-notifications/", {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },

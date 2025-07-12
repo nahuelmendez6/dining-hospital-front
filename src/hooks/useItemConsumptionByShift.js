@@ -2,6 +2,24 @@ import { useState, useEffect } from 'react';
 import { getItemConsumptionByShift } from '../services/reportsService';
 import { useAuth } from '../contexts/AuthContext';
 
+
+/**
+ * Hook para obtener y formatear el consumo de ítems agrupado por turno.
+ *
+ * @param {Object} initialFilters - Filtros iniciales para la consulta (ejemplo: fecha, turno, etc.)
+ * 
+ * @returns {Object} {
+ *   data: Array de objetos con consumo por turno y cantidades por ítem,
+ *   items: Array con los nombres únicos de los ítems consumidos,
+ *   filters: Estado actual de filtros,
+ *   setFilters: Función para actualizar los filtros,
+ *   loading: Booleano que indica si está cargando,
+ *   error: Mensaje de error en caso de fallo,
+ * }
+ *
+ * La estructura `data` es un arreglo donde cada objeto representa un turno,
+ * y contiene propiedades con el nombre del ítem y su cantidad consumida.
+ */
 const useItemConsumptionByShift = (initialFilters) => {
   const { accessToken } = useAuth();
   const [data, setData] = useState([]);

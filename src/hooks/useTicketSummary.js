@@ -2,6 +2,17 @@ import { useState, useEffect } from 'react';
 import { getTicketSummary } from '../services/reportsService';
 import { useAuth } from '../contexts/AuthContext';
 
+/**
+ * Custom hook para obtener y manejar el resumen de tickets.
+ *
+ * Realiza la consulta del resumen de tickets al backend utilizando el token de autenticación,
+ * y proporciona datos listos para mostrar en tarjetas, además del estado de carga y errores.
+ *
+ * @returns {Object} - Un objeto con:
+ *   - cardData: arreglo con datos formateados para tarjetas de resumen,
+ *   - loading: boolean que indica si está cargando la información,
+ *   - error: mensaje de error en caso de falla.
+ */
 const useTicketSummary = () => {
   const { accessToken } = useAuth();
   const [summary, setSummary] = useState(null);

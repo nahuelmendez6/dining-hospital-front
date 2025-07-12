@@ -2,6 +2,19 @@ import { useState, useEffect } from 'react';
 import { getItemConsumptionTrend } from '../services/reportsService';
 import { useAuth } from '../contexts/AuthContext';
 
+/**
+ * Hook para obtener y transformar la tendencia de consumo de ítems a lo largo del tiempo.
+ * 
+ * @returns {Object} {
+ *   data: Array de objetos donde cada objeto representa un día y las cantidades consumidas por ítem,
+ *   items: Array con los nombres únicos de los ítems consumidos,
+ *   loading: Booleano que indica si la carga está en progreso,
+ *   error: Mensaje de error si ocurrió algún problema,
+ * }
+ * 
+ * La estructura de `data` es ideal para graficar series temporales, ya que cada objeto
+ * contiene la fecha y las cantidades consumidas de cada ítem ese día.
+ */
 const useItemConsumptionTrend = () => {
   const { accessToken } = useAuth();
   const [data, setData] = useState([]);

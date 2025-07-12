@@ -2,6 +2,19 @@ import { useState, useEffect } from 'react';
 import { getItemConsumptionVsStock } from '../services/reportsService';
 import { useAuth } from '../contexts/AuthContext';
 
+
+/**
+ * Hook para obtener y gestionar datos del consumo de ítems en comparación con el stock disponible.
+ * 
+ * @param {Object} initialFilters - Filtros iniciales para la consulta (por ejemplo, rango de fechas).
+ * @returns {Object} {
+ *   data: Array con objetos que contienen nombre del ítem, cantidad consumida y stock actual,
+ *   filters: Objeto con filtros actuales,
+ *   setFilters: Función para actualizar los filtros,
+ *   loading: Booleano que indica si la carga está en proceso,
+ *   error: Mensaje de error, si ocurrió alguno,
+ * }
+ */
 const useItemConsumptionVsStock = (initialFilters) => {
   const { accessToken } = useAuth();
   const [data, setData] = useState([]);

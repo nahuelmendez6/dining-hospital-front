@@ -6,7 +6,21 @@ import {
   toggleShiftMenuActive,
 } from "../services/menuService";
 
-
+/**
+ * Hook personalizado para manejar la lógica de turnos (shifts).
+ * Incluye carga de turnos, creación, edición, eliminación,
+ * además de asignación de ítems de menú y activación/desactivación de menús.
+ * 
+ * @param {string} token - Token JWT para autenticación en las peticiones API.
+ * @returns {Object} 
+ *   - shifts: lista de turnos obtenidos,
+ *   - loading: booleano que indica si está cargando datos,
+ *   - error: mensaje de error en caso de fallo,
+ *   - saveShift: función para crear o editar un turno,
+ *   - removeShift: función para eliminar un turno,
+ *   - updateItems: función para asignar ítems de menú a un turno,
+ *   - toggleActive: función para activar o desactivar el menú de un turno.
+ */
 const useShifts = (token) =>{
     const [shifts, setShifts] = useState([]);
     const [loading, setLoading] = useState(false);

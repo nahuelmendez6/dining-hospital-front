@@ -27,6 +27,39 @@ import './App.css'
 
 import TestRef from './components/TestRef';
 
+
+/**
+ * Componente principal de la aplicación.
+ * Configura las rutas públicas y protegidas, envolviendo toda la app con AuthProvider y Router.
+ *
+ * Rutas públicas:
+ * - /login: Página para login con usuario y contraseña.
+ * - /login-pin: Página para login con PIN.
+ * - /unauthorized: Página de acceso denegado.
+ * - /tickets: Página pública para generación de tickets.
+ * - /test: Página de prueba.
+ *
+ * Rutas protegidas por grupos:
+ * - Cocina y admin_cocina:
+ *   - /ticket-list: Lista de tickets para cocina.
+ *   - /menu: Gestión del menú.
+ * - Admin:
+ *   - /users: Gestión de usuarios.
+ *   - /tickets-table: Visualización de tickets en tabla.
+ *   - /shifts: Gestión de turnos.
+ * - Admin y supervisor:
+ *   - /reports: Página de reportes.
+ *
+ * Ruta protegida para todos usuarios autenticados:
+ * - /dashboard: Dashboard principal.
+ *
+ * Redirecciona la raíz "/" y rutas no encontradas "*" a /dashboard.
+ *
+ * Incluye contenedor de notificaciones (ToastContainer).
+ *
+ * @returns {JSX.Element} La estructura de rutas de la aplicación.
+ */
+
 function App() {
   return (
     <AuthProvider>

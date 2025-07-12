@@ -1,10 +1,29 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
+
+/**
+ * Contexto de autenticación que provee el estado y funciones para login, logout y manejo de usuario.
+ */
 const AuthContext = createContext(null);
 
+
+/**
+ * Hook para consumir el contexto de autenticación.
+ * @returns {Object} El contexto de autenticación.
+ */
 export const useAuth = () => useContext(AuthContext);
 
+
+/**
+ * Proveedor de contexto para autenticación.
+ * Maneja el estado del usuario, tokens, y funciones para login/logout.
+ *
+ * @param {React.ReactNode} children - Componentes hijos que consumirán el contexto.
+ * @returns {JSX.Element} Provider con el contexto de autenticación.
+ */
 export const AuthProvider = ({ children }) => {
+  
+  // Estado para el usuario y perfil de usuario (puede ser redundante, pero útil)
   const [user, setUser] = useState(null);           // Perfil completo del usuario
   const [userProfile, setUserProfile] = useState(null); // Mismo objeto perfil, redundante pero cómodo
   const [loading, setLoading] = useState(true);
@@ -12,6 +31,12 @@ export const AuthProvider = ({ children }) => {
 
   const API_URL = 'http://localhost:8000';
 
+
+  /**
+   * Decodifica un JWT para obtener su payload.
+   * @param {string} token - Token JWT.
+   * @returns {Object|null} Payload decodificado o null si hay error.
+   */
   const decodeToken = (token) => {
     try {
       const base64Url = token.split('.')[1];
@@ -26,6 +51,11 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+   /**
+   * Carga la información del usuario desde la API usando el token.
+   * @param {string} token - Token de acceso válido.
+   * @returns {Promise<boolean>} true si carga con éxito, false en caso contrario.
+   */
   const loadUserData = async (token) => {
     try {
       console.log('Cargando datos del usuario...');
@@ -67,6 +97,13 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+
+
+  /**
+   * Verifica si un token JWT está expirado.
+   * @param {string} token - Token JWT.
+   * @returns {boolean} true si está expirado, false si es válido.
+   */
   const isTokenExpired = (token) => {
     const decoded = decodeToken(token);
     if (!decoded) return true;
@@ -74,6 +111,11 @@ export const AuthProvider = ({ children }) => {
     return decoded.exp < currentTime;
   };
 
+
+  /**
+   * Intenta refrescar el token de acceso usando el refresh token almacenado.
+   * @returns {Promise<boolean>} true si refresca con éxito, false si falla.
+   */
   const refreshToken = async () => {
     const refreshToken = localStorage.getItem('refreshToken');
     if (!refreshToken) return false;
@@ -98,6 +140,11 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+
+  /**
+   * Efecto que inicializa la autenticación al montar el provider.
+   * Verifica token, lo refresca si es necesario y carga datos del usuario.
+   */
   useEffect(() => {
     const initializeAuth = async () => {
       const token = localStorage.getItem('accessToken');
@@ -133,6 +180,13 @@ export const AuthProvider = ({ children }) => {
     initializeAuth();
   }, []);
 
+
+  /**
+   * Función para iniciar sesión con usuario y contraseña.
+   * @param {string} username
+   * @param {string} password
+   * @returns {Promise<boolean>} true si login exitoso, lanza error si falla.
+   */
   const loginWithCredentials = async (username, password) => {
     try {
       console.log('Iniciando proceso de login...');
@@ -170,6 +224,12 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+
+  /**
+   * Función para iniciar sesión con un PIN (alternativa).
+   * @param {string} pin
+   * @returns {Promise<boolean>} true si login exitoso, lanza error si falla.
+   */
   const loginWithPin = async (pin) => {
     try {
       console.log('Iniciando login con PIN...');
@@ -207,6 +267,10 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+
+  /**
+   * Función para cerrar sesión, eliminando tokens y datos del usuario.
+   */
   const logout = () => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
@@ -215,22 +279,40 @@ export const AuthProvider = ({ children }) => {
     setUserProfile(null);
   };
 
-  // Funciones para grupos
+  /**
+   * Verifica si el usuario pertenece a un grupo específico.
+   * @param {string} groupName - Nombre del grupo.
+   * @returns {boolean} true si pertenece, false si no.
+   */
+
   const isInGroup = (groupName) => {
     if (!userProfile || !userProfile.groups) return false;
     return userProfile.groups.includes(groupName);
   };
 
+
+  /**
+   * Verifica si el usuario pertenece a alguno de los grupos indicados.
+   * @param {string[]} groupNames - Lista de nombres de grupos.
+   * @returns {boolean} true si pertenece a alguno, false si no.
+   */
   const isInAnyGroup = (groupNames) => {
     if (!userProfile || !userProfile.groups) return false;
     return groupNames.some(groupName => userProfile.groups.includes(groupName));
-  };
+  };  
 
+
+   /**
+   * Verifica si el usuario pertenece a todos los grupos indicados.
+   * @param {string[]} groupNames - Lista de nombres de grupos.
+   * @returns {boolean} true si pertenece a todos, false si no.
+   */
   const isInAllGroups = (groupNames) => {
     if (!userProfile || !userProfile.groups) return false;
     return groupNames.every(groupName => userProfile.groups.includes(groupName));
   };
 
+  // Objeto con valores y funciones del contexto
   const value = {
     user,
     userProfile,
@@ -244,6 +326,8 @@ export const AuthProvider = ({ children }) => {
     isInAllGroups,
   };
 
+
+  // Renderiza el Provider y muestra los hijos solo si no está cargando
   return (
     <AuthContext.Provider value={value}>
       {!loading && children}

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import UserDeactivateModal from "./UserDeactivateModal";
 
 const groupIcons = {
   admin: "bi-person-badge",
@@ -9,6 +10,24 @@ const groupIcons = {
 
 const UsersTable = ({ users, loading, onEdit, onDelete }) => {
   const [openGroups, setOpenGroups] = useState({});
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+
+  const handleDeactivateClick = (user) => {
+    setSelectedUser(user);
+    setIsModalOpen(true);
+  };
+
+  const handleConfirmDeactivate = () => {
+    onDelete(selectedUser);
+    setIsModalOpen(false);
+    setSelectedUser(null);
+  };
+
+  const handleCancelDeactivate = () => {
+    setIsModalOpen(false);
+    setSelectedUser(null);
+  };
 
   // Agrupar usuarios por su primer grupo
   const groupedUsers = users.reduce((acc, user) => {
@@ -81,8 +100,8 @@ const UsersTable = ({ users, loading, onEdit, onDelete }) => {
                           <button className="btn btn-sm btn-outline-primary" onClick={() => onEdit(user)}>
                             <i className="bi bi-pencil" /> Editar
                           </button>
-                          <button className="btn btn-sm btn-outline-danger" onClick={() => onDelete(user)}>
-                            <i className="bi bi-trash" /> Eliminar
+                          <button className="btn btn-sm btn-outline-danger" onClick={() => handleDeactivateClick(user)}>
+                            <i className="bi bi-trash" /> Desactivar
                           </button>
                         </div>
                       </div>
@@ -94,6 +113,12 @@ const UsersTable = ({ users, loading, onEdit, onDelete }) => {
           </div>
         );
       })}
+       <UserDeactivateModal
+        show={isModalOpen}
+        onCancel={handleCancelDeactivate}
+        onConfirm={handleConfirmDeactivate}
+        userName={selectedUser ? `${selectedUser.first_name} ${selectedUser.last_name}` : ""}
+      />
     </div>
   );
 };

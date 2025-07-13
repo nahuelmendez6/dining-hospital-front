@@ -31,13 +31,12 @@ const Users = () => {
   };
 
   const handleDelete = async (user) => {
-    if (!window.confirm(`¿Eliminar a ${user.first_name} ${user.last_name}?`)) return;
     try {
       await deleteUser(user.id, accessToken);
       setUsers(prev => prev.filter(u => u.id !== user.id));
-      setToast({ show: true, message: 'Usuario eliminado', type: 'success' });
+      setToast({ show: true, message: 'Usuario desactivado', type: 'success' });
     } catch (err) {
-      setToast({ show: true, message: 'Error al eliminar', type: 'danger' });
+      setToast({ show: true, message: 'Error al desactivar', type: 'danger' });
     }
   };
 

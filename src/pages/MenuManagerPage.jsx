@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import Tabs from "react-bootstrap/Tabs";
 import Tab from "react-bootstrap/Tab";
-import { Button } from "react-bootstrap";
+import { Button, Form, Col, Row } from "react-bootstrap";
 import Accordion from "react-bootstrap/Accordion";
 
 import MenuItemForm from "../components/menu/MenuItemForm";
@@ -46,26 +46,29 @@ function MenuManagerPage() {
     <div className="container py-4">
       <h2 className="mb-4">Gestión de Menú</h2>
 
+
+
       <Tabs defaultActiveKey="items" className="mb-4">
         {/* TAB 1: Ítems */}
         <Tab eventKey="items" title="Gestión de Ítems">
-        <Button variant="success" onClick={() => setShowItemModal(true)}>Nuevo Ítem</Button>
+        {/* <Button variant="success" onClick={() => setShowItemModal(true)}>Nuevo Ítem</Button> */}
         {/* <Button variant="success" onClick={() => setShowIngredientModal(true)}>Nuevo Ingrediente</Button> */}
 
-          {/* <MenuItemForm
+          <MenuItemForm
             initialItem={editingItem}
             onSubmit={handleItemCreated}
             onCancel={() => setEditingItem(null)}
-          /> */}
-          <hr />
-          <MenuList
-            items={items}
-            onEdit={(item) => {
-              setEditingItem(item);
-              setShowItemModal(true);
-            }}
-            onDelete={removeItem}
           />
+          <hr />
+          
+              <MenuList
+                items={items}
+                onEdit={(item) => {
+                  setEditingItem(item);
+                  setShowItemModal(true);
+                }}
+                onDelete={removeItem}
+              />
         </Tab>
 
         {/* TAB 2: Turnos */}
@@ -154,12 +157,12 @@ function MenuManagerPage() {
         </Tab>
       </Tabs>
 
-      <MenuItemModal
+      {/* <MenuItemModal
           show={showItemModal}
           onHide={() => setShowItemModal(false)}
           initialItem={editingItem}
           onSubmit={handleItemCreated}
-        />
+        /> */}
 
         <IngredientModal
           show={showIngredientModal}

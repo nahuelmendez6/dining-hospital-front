@@ -6,6 +6,8 @@ import {
   deleteRecipeIngredient,
 } from "../../services/recipeService";
 
+import { useAuth } from "../../contexts/AuthContext";
+
 function RecipeEditor({ menuItemId }) {
   const [ingredients, setIngredients] = useState([]);
   const [recipe, setRecipe] = useState([]);
@@ -13,11 +15,14 @@ function RecipeEditor({ menuItemId }) {
   const [quantity, setQuantity] = useState("");
   const [loading, setLoading] = useState(false);
 
+
+  const { accessToken } = useAuth();
+
   useEffect(() => {
     if (!menuItemId) return;
 
     setLoading(true);
-    getIngredients()
+    getIngredients(accessToken)
       .then(setIngredients)
       .finally(() => setLoading(false));
 
